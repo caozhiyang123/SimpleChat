@@ -170,7 +170,7 @@ public class HomePage {
 	}
 	
 	private static String getCurrentDateTime() {
-		SimpleDateFormat sdf = new SimpleDateFormat("YY-mm-dd hh:MM:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:MM:ss");
 		return sdf.format(new Date());
 	}
 		
