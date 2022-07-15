@@ -31,28 +31,32 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
-public class HomePage {
+public class HomePage extends JFrame{
 	private static JTextPane chatArea;
 	private static JTextArea chatInputArea;
 	private static JButton sendMsgButton;
 	
 	private static JScrollPane subPanelb_a_1_scroll;
 	
-	public static void main(String[] args) {
+	public HomePage() {
 		createHomePage();
+	}
+	
+	public static void main(String[] args) {
+		new HomePage();
 		ChatClient.init();
 	}
 
-	private static void createHomePage() {
-		JFrame homeFrame = new JFrame("GameSmartChat");
-		homeFrame.setPreferredSize(new Dimension(950, 632));
-		homeFrame.setSize(new Dimension(400, 400));
-		homeFrame.setLocationRelativeTo(null);
-		homeFrame.getContentPane().add(createChatPanel());
-		homeFrame.pack();
-		homeFrame.setVisible(true);
+	private void createHomePage() {
+		this.setTitle("GameSmartChat");
+		this.setPreferredSize(new Dimension(950, 632));
+		this.setSize(new Dimension(400, 400));
+		this.setLocationRelativeTo(null);
+		this.getContentPane().add(createChatPanel());
+		this.pack();
+		this.setVisible(true);
 		
-		homeFrame.addWindowListener(new WindowAdapter()
+		this.addWindowListener(new WindowAdapter()
         {
             @Override
             public void windowClosing(WindowEvent windowevent)
