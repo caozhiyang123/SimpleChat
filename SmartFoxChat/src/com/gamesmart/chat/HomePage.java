@@ -7,6 +7,8 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.SimpleDateFormat;
@@ -22,6 +24,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -122,6 +126,39 @@ public class HomePage {
 		subPanelb_b_1.setLayout(new GridLayout(1,1));
 		chatInputArea = new JTextArea("hello......");
 		chatInputArea.setLineWrap(true);
+		chatInputArea.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.isControlDown() && e.getKeyCode() == KeyEvent.VK_ENTER) {
+					e.consume();
+					chatInputArea.append("\n");
+				}else if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+					e.consume();
+					try {
+						resetTextArea("晓萌",chatInputArea.getText());
+						sendMsg();
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+					chatArea.paintImmediately(chatArea.getBounds());
+					chatInputArea.setText("");
+					setMaxValueBar();
+				}
+			}
+		});
 		subPanelb_b_1.add(chatInputArea);
 		subPanelb_b_1.setBorder(BorderFactory.createLoweredBevelBorder());
 		subPanelb_a_2.add(subPanelb_b_1);
@@ -135,26 +172,15 @@ public class HomePage {
 				String text = chatInputArea.getText().trim();
 				if(text == null || text.length() == 0 || text.length()>=100) {return;}
 				try {
-					//then fill the chat panel
-					StyledDocument document = chatArea.getStyledDocument();
-					document.insertString(document.getLength(),"\n"+"[晓萌]",getRightStyle());
-					document.setParagraphAttributes(document.getLength(), 1, getRightStyle(), false);
-					document.insertString(document.getLength(),"\n"+getCurrentDateTime(),getRightStyle());
-					document.setParagraphAttributes(document.getLength(), 1, getRightStyle(), false);
-					document.insertString(document.getLength(),"\n"+chatInputArea.getText(),getRightBlackStyle());
-					document.setParagraphAttributes(document.getLength(), 1, getRightStyle(), false); 
-					//firstly, get msg to server
 					sendMsg();
-				} catch (BadLocationException e1) {
+					resetTextArea("晓萌",chatInputArea.getText()); 
+				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
 				chatArea.paintImmediately(chatArea.getBounds());
 				chatInputArea.setText("");
 				setMaxValueBar();
 			}
-
-			
-
 		});
 		sendMsgButton.setAlignmentX(SwingConstants.EAST);
 		sendMsgButton.setBackground(Color.GRAY);
@@ -167,6 +193,16 @@ public class HomePage {
 		panel.add(subPanelb);
 		
 		return panel;
+	}
+	
+	private static void resetTextArea(String name,String msg) throws Exception {
+		StyledDocument document = chatArea.getStyledDocument();
+		document.insertString(document.getLength(),"\n"+"["+name+"]",getRightStyle());
+		document.setParagraphAttributes(document.getLength(), 1, getRightStyle(), false);
+		document.insertString(document.getLength(),"\n"+getCurrentDateTime(),getRightStyle());
+		document.setParagraphAttributes(document.getLength(), 1, getRightStyle(), false);
+		document.insertString(document.getLength(),"\n"+msg,getRightBlackStyle());
+		document.setParagraphAttributes(document.getLength(), 1, getRightStyle(), false);
 	}
 	
 	private static String getCurrentDateTime() {
@@ -201,14 +237,8 @@ public class HomePage {
 	public static void resetTextArea(String msg) {
 		try {
 			msg = msg.substring(msg.indexOf("msg_[")+5, msg.indexOf("]_msg"));
-			StyledDocument document = chatArea.getStyledDocument();
-			document.insertString(document.getLength(),"\n"+"[永强]",getRightStyle());
-			document.setParagraphAttributes(document.getLength(), 1, getRightStyle(), false);
-			document.insertString(document.getLength(),"\n"+getCurrentDateTime(),getRightStyle());
-			document.setParagraphAttributes(document.getLength(), 1, getRightStyle(), false);
-			document.insertString(document.getLength(),"\n"+msg,getRightBlackStyle());
-			document.setParagraphAttributes(document.getLength(), 1, getRightStyle(), false);
-			chatArea.paintImmediately(chatArea.getBounds());
+			resetTextArea("永强",msg);
+			//chatArea.paintImmediately(chatArea.getBounds());
 			setMaxValueBar();
 		} catch (Exception e) {
 			e.printStackTrace();

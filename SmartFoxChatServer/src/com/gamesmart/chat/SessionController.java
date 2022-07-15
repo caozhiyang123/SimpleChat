@@ -41,11 +41,11 @@ public class SessionController {
 				sendMsg.append(msg);
 				sendMsg.append("]from,");
 			}
-			System.out.println("from msg:"+sendMsg.toString());
+//			System.out.println("from msg:"+sendMsg.toString());
 			String sourceMsg = null;
 			while(in.available()>0 && !"exit".equals(sourceMsg)) {
 				sourceMsg = in.readUTF();
-				System.out.println("server received:"+sourceMsg);
+//				System.out.println("server received:"+sourceMsg);
 				if(!sourceMsg.contains("active") && !"exit".equals(sourceMsg)) {
 					msg = sourceMsg;
 				}if(!"exit".equals(sourceMsg)){
