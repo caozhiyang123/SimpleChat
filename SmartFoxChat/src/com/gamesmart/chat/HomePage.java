@@ -152,7 +152,8 @@ public class HomePage extends JFrame{
 				}else if(e.getKeyCode() == KeyEvent.VK_ENTER) {
 					e.consume();
 					try {
-						resetTextArea("晓萌",chatInputArea.getText());
+						resetTextArea("晓萌",chatInputArea.getText(),getRightStyle(),getRightBlackStyle());
+						chatArea.selectAll();
 						sendMsg();
 					} catch (Exception e1) {
 						e1.printStackTrace();
@@ -176,8 +177,9 @@ public class HomePage extends JFrame{
 				String text = chatInputArea.getText().trim();
 				if(text == null || text.length() == 0 || text.length()>=100) {return;}
 				try {
+					resetTextArea("晓萌",chatInputArea.getText(),getRightStyle(),getRightBlackStyle()); 
+					chatArea.selectAll();
 					sendMsg();
-					resetTextArea("晓萌",chatInputArea.getText()); 
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
@@ -199,19 +201,27 @@ public class HomePage extends JFrame{
 		return panel;
 	}
 	
-	private static void resetTextArea(String name,String msg) throws Exception {
+	private static void resetTextArea(String name,String msg,SimpleAttributeSet style,SimpleAttributeSet style2) throws Exception {
 		StyledDocument document = chatArea.getStyledDocument();
-		document.insertString(document.getLength(),"\n"+"["+name+"]",getRightStyle());
-		document.setParagraphAttributes(document.getLength(), 1, getRightStyle(), false);
-		document.insertString(document.getLength(),"\n"+getCurrentDateTime(),getRightStyle());
-		document.setParagraphAttributes(document.getLength(), 1, getRightStyle(), false);
-		document.insertString(document.getLength(),"\n"+msg,getRightBlackStyle());
-		document.setParagraphAttributes(document.getLength(), 1, getRightStyle(), false);
+		document.insertString(document.getLength(),"\n"+"["+name+"]",style);
+		document.setParagraphAttributes(document.getLength(), 1, style, false);
+		document.insertString(document.getLength(),"\n"+getCurrentDateTime(),style);
+		document.setParagraphAttributes(document.getLength(), 1, style, false);
+		document.insertString(document.getLength(),"\n"+msg,style2);
+		document.setParagraphAttributes(document.getLength(), 1, style, false);
 	}
 	
 	private static String getCurrentDateTime() {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:MM:ss");
 		return sdf.format(new Date());
+	}
+	
+	private static SimpleAttributeSet getLeftStyle() {
+		SimpleAttributeSet left = new SimpleAttributeSet(); 
+		StyleConstants.setAlignment(left, StyleConstants.ALIGN_LEFT); 
+		StyleConstants.setForeground(left, Color.BLUE);
+		StyleConstants.setFontSize(left, 10);
+		return left;
 	}
 		
 	private static SimpleAttributeSet getRightStyle() {
@@ -241,8 +251,8 @@ public class HomePage extends JFrame{
 	public static void resetTextArea(String msg) {
 		try {
 			msg = msg.substring(msg.indexOf("msg_[")+5, msg.indexOf("]_msg"));
-			resetTextArea("永强",msg);
-			//chatArea.paintImmediately(chatArea.getBounds());
+			resetTextArea("永强",msg,getLeftStyle(),getRightBlackStyle());
+			chatArea.selectAll();
 			setMaxValueBar();
 		} catch (Exception e) {
 			e.printStackTrace();
