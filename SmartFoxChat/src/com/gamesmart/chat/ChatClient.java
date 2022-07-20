@@ -4,13 +4,20 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import com.gamesmart.chat.vo.MessageVO;
 
 public class ChatClient{
 	private static int userId;
 	public static int getUserId() {return userId;}
+	private static ConcurrentLinkedQueue<MessageVO> messageQueue = new ConcurrentLinkedQueue<MessageVO>();
 	
 	public static void init() {
 		userId = (int)(new Random().nextDouble()*10000);
@@ -18,6 +25,43 @@ public class ChatClient{
 	
 	static {
 		new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(() -> keepAlive(), 3, 500, TimeUnit.MILLISECONDS);
+		//Request queue
+		new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(new SendMsgQueue(1000), 3, 1, TimeUnit.SECONDS);
+	}
+	
+	public static void addMessageVO(MessageVO messageVO) {
+		messageQueue.add(messageVO);
+	}
+	
+	public static class SendMsgQueue implements Runnable{
+
+		private int maxInsertRows = 1000;
+		
+		public SendMsgQueue(int maxInsertRows) {
+			this.maxInsertRows = maxInsertRows;
+		}
+
+		@Override
+		public void run() {
+			List<MessageVO> msgList = new ArrayList<MessageVO>();
+			MessageVO messageVO = messageQueue.poll();
+			while(messageVO != null) {
+				msgList.add(messageVO);
+				messageVO = messageQueue.poll();
+				if(msgList.size() >= maxInsertRows) {
+					sendMsg(msgList);
+					msgList.clear();
+				}
+			}
+			sendMsg(msgList);
+		}
+	}
+
+	private static void sendMsg(List<MessageVO> msgList) {
+		for (MessageVO messageVO : msgList) {
+			sendMsg(messageVO.getMsg());
+//			System.out.println(" = = = send msg = = =");
+		}
 	}
 	
 	private static String lastMsg;
@@ -28,6 +72,7 @@ public class ChatClient{
 		try {
 			synchronized("send Msg") {
 				socket = new Socket("3.220.82.17",1991);
+				socket.setKeepAlive(true);
 //				socket = new Socket("127.0.0.1",1991);
 				out = new DataOutputStream(socket.getOutputStream());
 				in = new DataInputStream(socket.getInputStream());
@@ -49,7 +94,7 @@ public class ChatClient{
 				}
 				boolean res = "exit".equals(msgFrom)?true:false;
 				if(!res) {
-					System.out.println("send msg:"+msg+",result:"+res);
+//					System.out.println("send msg:"+msg+",result:"+res);
 				}
 			}
 		} catch (Exception e) {

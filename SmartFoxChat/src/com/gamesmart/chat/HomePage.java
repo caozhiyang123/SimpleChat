@@ -31,6 +31,8 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import com.gamesmart.chat.vo.MessageVO;
+
 public class HomePage extends JFrame{
 	private static JTextPane chatArea;
 	private static JTextArea chatInputArea;
@@ -247,7 +249,9 @@ public class HomePage extends JFrame{
 	 */
 	private static void sendMsg() {
 		String msg = ChatClient.getUserId()+"_msg_["+chatInputArea.getText()+"]_msg";
-		new Thread(()->ChatClient.sendMsg(msg)).start();
+		MessageVO messageVO = new MessageVO(ChatClient.getUserId(),msg,true);
+		//new Thread(()->ChatClient.sendMsg(msg)).start();
+		new Thread(()->ChatClient.addMessageVO(messageVO)).start();
 	}
 	
 	/*
