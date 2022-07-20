@@ -17,7 +17,7 @@ public class ChatClient{
 	}
 	
 	static {
-		new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(() -> keepAlive(), 3, 100, TimeUnit.MILLISECONDS);
+		new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(() -> keepAlive(), 3, 500, TimeUnit.MILLISECONDS);
 	}
 	
 	private static String lastMsg;

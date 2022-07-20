@@ -67,10 +67,6 @@ public class SessionController {
 					}
 				}
 			}
-			
-			if("exit".equals(sourceMsg)) {
-				out.writeUTF(sourceMsg);
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally {
