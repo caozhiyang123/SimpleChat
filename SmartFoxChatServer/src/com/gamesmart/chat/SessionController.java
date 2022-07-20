@@ -6,11 +6,15 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import com.gamesmart.chat.vo.MessageVO;
 
 public class SessionController {
 	private static ServerSocket server = null;
@@ -18,40 +22,49 @@ public class SessionController {
 	private static DataInputStream in = null;
 	private static DataOutputStream out = null;
 	
-	private static String msg;
+	private static Map<Long,List<MessageVO>> msg;
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) {		
 		try {
+			msg = new ConcurrentHashMap<>();
 			server = new ServerSocket(1991);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		new ScheduledThreadPoolExecutor(1) .scheduleAtFixedRate(()-> start1(), 1, 100,TimeUnit.MILLISECONDS);
+		new ScheduledThreadPoolExecutor(1) .scheduleAtFixedRate(()-> start(), 1, 100,TimeUnit.MILLISECONDS);
 	}
 
-	public static void start1() {
+	public static void start() {
 		try {
 			accept = server.accept();
 			in = new DataInputStream(accept.getInputStream());
 			out = new DataOutputStream(accept.getOutputStream());
 			
-			StringBuffer sendMsg = new StringBuffer();
-			if(msg != null) {
-				sendMsg.append("from[");
-				sendMsg.append(msg);
-				sendMsg.append("]from,");
-			}
 //			System.out.println("from msg:"+sendMsg.toString());
 			String sourceMsg = null;
 			while(in.available()>0 && !"exit".equals(sourceMsg)) {
 				sourceMsg = in.readUTF();
 //				System.out.println("server received:"+sourceMsg);
+				long sourceUserId = 0L;
 				if(!sourceMsg.contains("active") && !"exit".equals(sourceMsg)) {
-					msg = sourceMsg;
-				}if(!"exit".equals(sourceMsg)){
-					out.writeUTF(sendMsg.toString());
-				}else if("exit".equals(sourceMsg)){
+					sourceUserId = Long.valueOf(sourceMsg.substring(0, sourceMsg.indexOf("_msg_")));
+					String msgFrom = sourceMsg;
+					long userIdFrom = sourceUserId;
+					setMsg(msgFrom, userIdFrom);
+				}
+				
+				if("exit".equals(sourceMsg)){
 					out.writeUTF(sourceMsg);
+				}else {
+					sourceUserId = Long.valueOf(sourceMsg.substring(0, sourceMsg.indexOf("_msg_")));
+					List<MessageVO> msgByUser = getMsg(sourceUserId);
+					for (MessageVO messageVO : msgByUser) {
+						if(!messageVO.isSent()) {
+							out.writeUTF(messageVO.getMsg());
+							messageVO.setIsSent(true);
+							break;
+						}
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -64,5 +77,21 @@ public class SessionController {
 			 * server.close(); } catch (IOException e) { e.printStackTrace(); }
 			 */
 		}
+	}
+
+	private static void setMsg(String msgFrom, long userIdFrom) {
+		List<MessageVO> msgByUser = getMsg(userIdFrom);
+		for (Map.Entry<Long, List<MessageVO>> map: msg.entrySet()) {
+			Long key = map.getKey();
+			//append self msg
+			//append to friends' msg
+			map.getValue().add(new MessageVO(userIdFrom,msgFrom,userIdFrom == (long)key));
+		}
+	}
+	
+	private static List<MessageVO> getMsg(Long userId) {
+		List<MessageVO> msgByUser = msg.getOrDefault(userId, Collections.synchronizedList(new ArrayList<>()));
+		msg.put(userId, msgByUser);
+		return msgByUser;
 	}
 }

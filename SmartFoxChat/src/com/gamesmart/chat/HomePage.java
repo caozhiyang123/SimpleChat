@@ -240,13 +240,16 @@ public class HomePage extends JFrame{
 		return right;
 	}
 	
+	/*
+	 * 5430_msg_[还行]_msg
+	 */
 	private static void sendMsg() {
 		String msg = ChatClient.getUserId()+"_msg_["+chatInputArea.getText()+"]_msg";
 		new Thread(()->ChatClient.sendMsg(msg)).start();
 	}
 	
 	/*
-	 * @param msg format "5430_msg_[还行]_msg"
+	 * @param msg format "from[5430_msg_[还行]_msg,...,...]from,"
 	 */
 	public static void resetTextArea(String msg) {
 		try {

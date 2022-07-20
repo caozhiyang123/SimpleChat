@@ -17,7 +17,7 @@ public class ChatClient{
 	}
 	
 	static {
-		new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(() -> keepAlive(), 3, 1, TimeUnit.SECONDS);
+		new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(() -> keepAlive(), 3, 3, TimeUnit.SECONDS);
 	}
 	
 	private static String lastMsg;
@@ -26,8 +26,8 @@ public class ChatClient{
 		DataOutputStream out = null;
 		DataInputStream in = null;
 		try {
-			socket = new Socket("3.220.82.17",1991);
-//			socket = new Socket("127.0.0.1",1991);
+//			socket = new Socket("3.220.82.17",1991);
+			socket = new Socket("127.0.0.1",1991);
 			out = new DataOutputStream(socket.getOutputStream());
 			in = new DataInputStream(socket.getInputStream());
 			if(!socket.isOutputShutdown()) {
@@ -67,8 +67,10 @@ public class ChatClient{
 		}
 	}
 
-
+	/*
+	 * 5430_msg_[active]_msg
+	 */
 	private static void keepAlive() {
-		sendMsg("userId_"+userId+"_[active]");
+		sendMsg(userId+"_msg_[active]_msg");
 	}
 }
