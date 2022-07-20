@@ -152,6 +152,8 @@ public class HomePage extends JFrame{
 				}else if(e.getKeyCode() == KeyEvent.VK_ENTER) {
 					e.consume();
 					try {
+						String text = chatInputArea.getText().trim();
+						if(text == null || text.length() == 0 || text.length()>=100) {return;}
 						resetTextArea("晓萌",chatInputArea.getText(),getRightStyle(),getRightBlackStyle());
 						chatArea.selectAll();
 						sendMsg();

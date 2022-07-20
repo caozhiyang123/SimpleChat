@@ -17,7 +17,7 @@ public class ChatClient{
 	}
 	
 	static {
-		new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(() -> keepAlive(), 3, 3, TimeUnit.SECONDS);
+		new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(() -> keepAlive(), 3, 100, TimeUnit.MILLISECONDS);
 	}
 	
 	private static String lastMsg;
@@ -26,24 +26,30 @@ public class ChatClient{
 		DataOutputStream out = null;
 		DataInputStream in = null;
 		try {
-//			socket = new Socket("3.220.82.17",1991);
-			socket = new Socket("127.0.0.1",1991);
-			out = new DataOutputStream(socket.getOutputStream());
-			in = new DataInputStream(socket.getInputStream());
-			if(!socket.isOutputShutdown()) {
-				out.writeUTF(msg);
-				out.writeUTF("exit");
-			}
-			//receive msg from server
-			TimeUnit.SECONDS.sleep(1);
-			String msgFrom = null;
-			while(in.available()>0 && !"exit".equals(msgFrom)) {
-				msgFrom = in.readUTF();
-				if(!msgFrom.isEmpty() && !"exit".equals(msgFrom) && !msgFrom.contains(String.valueOf(userId)) 
-						&& !msgFrom.contains("active") && !msgFrom.equals(lastMsg)) {
-//					System.out.println("client received:"+msgFrom);
-					HomePage.resetTextArea(msgFrom);
-					lastMsg = msgFrom;
+			synchronized("send Msg") {
+				socket = new Socket("3.220.82.17",1991);
+//				socket = new Socket("127.0.0.1",1991);
+				out = new DataOutputStream(socket.getOutputStream());
+				in = new DataInputStream(socket.getInputStream());
+				if(!socket.isOutputShutdown()) {
+					out.writeUTF(msg);
+					out.writeUTF("exit");
+				}
+				//receive msg from server
+				TimeUnit.SECONDS.sleep(1);
+				String msgFrom = null;
+				while(in.available()>0 && !"exit".equals(msgFrom)) {
+					msgFrom = in.readUTF();
+					if(!msgFrom.isEmpty() && !"exit".equals(msgFrom) && !msgFrom.contains(String.valueOf(userId)) 
+							&& !msgFrom.contains("active") && !msgFrom.equals(lastMsg)) {
+	//					System.out.println("client received:"+msgFrom);
+						HomePage.resetTextArea(msgFrom);
+						lastMsg = msgFrom;
+					}
+				}
+				boolean res = "exit".equals(msgFrom)?true:false;
+				if(!res) {
+					System.out.println("send msg:"+msg+",result:"+res);
 				}
 			}
 		} catch (Exception e) {

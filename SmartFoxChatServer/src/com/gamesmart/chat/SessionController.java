@@ -31,7 +31,7 @@ public class SessionController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		new ScheduledThreadPoolExecutor(1) .scheduleAtFixedRate(()-> start(), 1, 100,TimeUnit.MILLISECONDS);
+		new ScheduledThreadPoolExecutor(1) .scheduleAtFixedRate(()-> start(), 1, 50,TimeUnit.MILLISECONDS);
 	}
 
 	public static void start() {
@@ -66,6 +66,10 @@ public class SessionController {
 						}
 					}
 				}
+			}
+			
+			if("exit".equals(sourceMsg)) {
+				out.writeUTF(sourceMsg);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
