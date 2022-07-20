@@ -24,9 +24,9 @@ public class ChatClient{
 	}
 	
 	static {
-		new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(() -> keepAlive(), 3, 500, TimeUnit.MILLISECONDS);
+		new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(() -> keepAlive(), 1, 1000, TimeUnit.MILLISECONDS);
 		//Request queue
-		new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(new SendMsgQueue(1000), 3, 1, TimeUnit.SECONDS);
+		new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(new SendMsgQueue(10), 1, 1, TimeUnit.SECONDS);
 	}
 	
 	public static void addMessageVO(MessageVO messageVO) {
@@ -35,7 +35,7 @@ public class ChatClient{
 	
 	public static class SendMsgQueue implements Runnable{
 
-		private int maxInsertRows = 1000;
+		private int maxInsertRows = 10;
 		
 		public SendMsgQueue(int maxInsertRows) {
 			this.maxInsertRows = maxInsertRows;
@@ -60,7 +60,7 @@ public class ChatClient{
 	private static void sendMsg(List<MessageVO> msgList) {
 		for (MessageVO messageVO : msgList) {
 			sendMsg(messageVO.getMsg());
-//			System.out.println(" = = = send msg = = =");
+			System.out.println(" = = = send msg : "+messageVO.getMsg());
 		}
 	}
 	
@@ -72,8 +72,8 @@ public class ChatClient{
 		try {
 			synchronized("send Msg") {
 				socket = new Socket("3.220.82.17",1991);
-				socket.setKeepAlive(true);
 //				socket = new Socket("127.0.0.1",1991);
+				socket.setKeepAlive(true);
 				out = new DataOutputStream(socket.getOutputStream());
 				in = new DataInputStream(socket.getInputStream());
 				if(!socket.isOutputShutdown()) {
@@ -122,6 +122,8 @@ public class ChatClient{
 	 * 5430_msg_[active]_msg
 	 */
 	private static void keepAlive() {
-		sendMsg(userId+"_msg_[active]_msg");
+		String msg = userId+"_msg_[active]_msg";
+//		addMessageVO(new MessageVO(userId,msg,true));
+		sendMsg(msg);
 	}
 }
