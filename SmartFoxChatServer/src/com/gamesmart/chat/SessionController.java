@@ -55,14 +55,12 @@ public class SessionController {
 				
 				if("exit".equals(sourceMsg)){
 					out.writeUTF(sourceMsg);
-					out.flush();
 				}else {
 					sourceUserId = Long.valueOf(sourceMsg.substring(0, sourceMsg.indexOf("_msg_")));
 					List<MessageVO> msgByUser = getMsg(sourceUserId);
 					for (MessageVO messageVO : msgByUser) {
 						if(!messageVO.isSent()) {
 							out.writeUTF(messageVO.getMsg());
-							out.flush();
 							messageVO.setIsSent(true);
 							break;
 						}

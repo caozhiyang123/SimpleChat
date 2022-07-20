@@ -71,16 +71,14 @@ public class ChatClient{
 		DataInputStream in = null;
 		try {
 			synchronized("send Msg") {
-//				socket = new Socket("3.220.82.17",1991);
-				socket = new Socket("127.0.0.1",1991);
+				socket = new Socket("3.220.82.17",1991);
+//				socket = new Socket("127.0.0.1",1991);
 				socket.setKeepAlive(true);
 				out = new DataOutputStream(socket.getOutputStream());
 				in = new DataInputStream(socket.getInputStream());
 				if(!socket.isOutputShutdown()) {
 					out.writeUTF(msg);
-					out.flush();
 					out.writeUTF("exit");
-					out.flush();
 				}
 				//receive msg from server
 				TimeUnit.SECONDS.sleep(1);
