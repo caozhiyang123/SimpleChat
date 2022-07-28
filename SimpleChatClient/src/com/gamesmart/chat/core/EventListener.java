@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 
 import com.gamesmart.chat.io.EventVariable;
 import com.gamesmart.chat.io.Request;
+import com.gamesmart.chat.page.HomePage;
 import com.gamesmart.chat.page.LoginPage;
 import com.gamesmart.chat.vo.PlayerState;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
@@ -76,6 +77,8 @@ public class EventListener implements IEventListener{
 			String userInfo = getUserVariable(EventVariable.USER_INFO).getStringValue();
 			playerState.getPlayerVO().setAlias(aliasName);
 			playerState.getPlayerVO().setInfo(userInfo);
+			
+			HomePage.getInstance().appendMsg(userInfo);
 		}
 	}
 	

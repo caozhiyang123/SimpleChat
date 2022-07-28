@@ -5,8 +5,8 @@ public class PlayerVO {
 	private long userId;
 	private String alias;
 	private long coins;
-	private long setFacebookID;
-	private String setGoogleID;
+	private long facebookID;
+	private String googleID;
 	private String platFormSignIn;
 	private String netWorkSignin;
 	private int level;
@@ -34,10 +34,10 @@ public class PlayerVO {
 		this.coins = coins;
 	}
 	public void setFacebookID(long faceBookID) {
-		this.setFacebookID = faceBookID;
+		this.facebookID = faceBookID;
 	}
 	public void setGoogleID(String googleID) {
-		this.setGoogleID = googleID;
+		this.googleID = googleID;
 	}
 	public void setPlatFormSignIn(String platFormSignIn) {
 		this.platFormSignIn = platFormSignIn;
@@ -75,11 +75,22 @@ public class PlayerVO {
 	}
 	@Override
 	public String toString() {
-		return "PlayerVO [userId=" + userId + ", alias=" + alias + ", coins=" + coins + ", setFacebookID="
-				+ setFacebookID + ", setGoogleID=" + setGoogleID + ", platFormSignIn=" + platFormSignIn
-				+ ", netWorkSignin=" + netWorkSignin + ", level=" + level + ", xp=" + xp + ", xpToday=" + xpToday
-				+ ", savings=" + savings + ", freeSpins=" + freeSpins + ", loyaltyLevel=" + loyaltyLevel + ", chips="
-				+ chips + ", pic=" + pic + ", isPurchasedWithPuzzle=" + isPurchasedWithPuzzle + ", clubId=" + clubId
-				+ "]";
+		return "[userId=" + userId+ "\n"
+				+ ", alias=" + alias + "\n"
+				+ ", coins=" + coins 
+				+ ", setFacebookID=" + facebookID + "\n"
+				+ ", setGoogleID=" + googleID + "\n"
+				+ ", platFormSignIn=" + platFormSignIn+ "\n"
+				+ ", netWorkSignin=" + netWorkSignin + "\n"
+				+ ", level=" + level + "\n"
+				+ ", xp=" + xp + "\n"
+				+ ", xpToday=" + xpToday+ "\n"
+				+ ", savings=" + savings + "\n"
+				+ ", freeSpins=" + freeSpins + "\n"
+				+ ", loyaltyLevel=" + loyaltyLevel + "\n"
+				+ ", chips=" + chips + "\n"
+				+ ", pic=" + pic + "\n"
+				+ ", isPurchasedWithPuzzle=" + isPurchasedWithPuzzle + "\n"
+				+ ", clubId=" + clubId	+ "]";
 	}
 }

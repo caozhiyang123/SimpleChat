@@ -24,6 +24,6 @@ public class PublicMessageHandler extends BaseServerEventHandler {
 		object.putLong("send_id", userId);
 		object.putUtfString("msg", event.getParameter(SFSEventParam.MESSAGE).toString());
 		this.send("on_public_message", object, users);
+		logger.info("= = = on_public_message,users:"+users.toString()+",params:"+object.toJson());
 	}
-
 }

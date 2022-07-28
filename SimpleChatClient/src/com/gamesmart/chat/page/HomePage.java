@@ -272,6 +272,6 @@ public class HomePage extends JFrame{
 	}
 	
 	public void appendMsg(String msg) {
-		resetTextArea(msg);	
+		resetTextArea(msg);
 	}
 }
