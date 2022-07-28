@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.gamesmart.simplechat.sfs.core.JoinZoneEventHandler;
+import com.gamesmart.simplechat.sfs.core.PublicMessageHandler;
 import com.gamesmart.simplechat.sfs.core.RoomCreatedHandler;
 import com.gamesmart.simplechat.sfs.core.RoomRemovedHandler;
 import com.gamesmart.simplechat.sfs.core.UserLogoutHandler;
@@ -27,6 +28,7 @@ public class RegisterExtension extends SFSExtension{
 		addEventHandler(SFSEventType.USER_LOGOUT, UserLogoutHandler.class);
 		addEventHandler(SFSEventType.USER_DISCONNECT, UserLogoutHandler.class);
 		addEventHandler(SFSEventType.ROOM_REMOVED, RoomRemovedHandler.class);
+		addEventHandler(SFSEventType.PUBLIC_MESSAGE, PublicMessageHandler.class);
 		
 		//createRoom();
 	}

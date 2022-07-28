@@ -1,19 +1,19 @@
 package com.gamesmart.chat.vo;
 
 public class PlayerVO {
-	private String userId;
+	private long userId;
 	private String pass;//MD5
 	private String aliasName;
 	
-	public PlayerVO(String userId, String pass) {
+	public PlayerVO(long userId, String pass) {
 		this.userId = userId;
 		this.pass = pass;
 	}
 	
-	public String getUserId() {
+	public long getUserId() {
 		return userId;
 	}
-	public void setUserId(String userId) {
+	public void setUserId(long userId) {
 		this.userId = userId;
 	}
 	public String getPass() {

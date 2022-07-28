@@ -277,8 +277,8 @@ public class LoginPage extends JFrame {
                     passWarningLabel.setText("非法警告< 密码不能为空 >");
                     return;
                 }
-
-                if (userName == null) {
+                //use regex to check if it is digit
+                if (userName == null || !userName.matches("-?\\d+(\\.\\d+)?")) {
                     usernameWarningLabel.setText("非法警告< 账号不能为空 >");
                     passWarningLabel.setText("");
                     return;
@@ -319,7 +319,7 @@ public class LoginPage extends JFrame {
                 usernameWarningLabel.setText("");
                 passWarningLabel.setText("");
                 System.out.println("userName:" + userName + " ,pass:" + passSb.toString());
-                connectSfs(userName,passSb.toString());
+                connectSfs(Long.valueOf(userName),passSb.toString());
             }
 
         });
@@ -345,7 +345,7 @@ public class LoginPage extends JFrame {
         return panel;
     }
     
-    private void connectSfs(String userName, String pass) {
+    private void connectSfs(long userName, String pass) {
     	PlayerState playerState = SimpleChatUtil.createPlayerState(userName,pass);
     	SimpleChatClient client = SimpleChatClient.getInstance();
     	client.init(playerState);
@@ -385,5 +385,4 @@ public class LoginPage extends JFrame {
         usernameWarningLabel.setText("");
         return true;
     }
-
 }

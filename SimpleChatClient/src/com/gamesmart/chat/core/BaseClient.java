@@ -33,6 +33,7 @@ abstract class BaseClient {
 		sfs.addEventListener(SFSEvent.CONNECTION_RETRY, listener);
 		sfs.addEventListener(SFSEvent.CONNECTION_RESUME, listener);
 		sfs.addEventListener(SFSEvent.CONNECTION_LOST, listener);
+		sfs.addEventListener(SFSEvent.PUBLIC_MESSAGE, listener);
 		
 		sfs.setDebug(true);
 		sfs.connect(ip, port);

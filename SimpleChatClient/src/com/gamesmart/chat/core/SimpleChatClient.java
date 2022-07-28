@@ -31,7 +31,7 @@ public class SimpleChatClient extends BaseClient{
 	
 	@Override
 	public void sendMsg(String msg) {
-		sfs.send(new PublicMessageRequest(msg, new SFSObject(), sfs.getLastJoinedRoom()));
+		EventListener.getInstance().sendMsg(msg);
 	}
 
 	@Override

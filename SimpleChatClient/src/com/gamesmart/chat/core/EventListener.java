@@ -21,6 +21,7 @@ import sfs2x.client.entities.User;
 import sfs2x.client.entities.variables.UserVariable;
 import sfs2x.client.requests.JoinRoomRequest;
 import sfs2x.client.requests.LoginRequest;
+import sfs2x.client.requests.PublicMessageRequest;
 
 public class EventListener implements IEventListener{
 	Logger logger = Logger.getLogger(EventListener.class);
@@ -65,8 +66,7 @@ public class EventListener implements IEventListener{
 		if(event.getType().equals(SFSEvent.EXTENSION_RESPONSE)) {
 			String cmd = String.valueOf(event.getArguments().get("cmd"));
             ISFSObject responseParams = (SFSObject) event.getArguments().get("params");
-            SFSUser user= (SFSUser) event.getArguments().get("user");
-			getCmdResponse(cmd,responseParams,user);
+			getCmdResponse(cmd,responseParams);
 		}
 	}
 
@@ -81,9 +81,10 @@ public class EventListener implements IEventListener{
         return sfsUser.getVariable(variableName);
     }
 	
-	private void getCmdResponse(String cmd, ISFSObject responseParams, SFSUser user) {
+	private void getCmdResponse(String cmd, ISFSObject responseParams) {
 		if(EventVariable.ON_PUBLIC_MESSAGE.equals(cmd)) {
-			if(user!=null && !user.isItMe()) {
+			long sendId = responseParams.getLong("send_id");
+			if(playerState.getPlayerVO().getUserId() != sendId) {
 				String msg = responseParams.getUtfString("msg").trim();
 				SimpleChatClient.getInstance().appendMsg(msg);
 			}
@@ -113,7 +114,10 @@ public class EventListener implements IEventListener{
 		}
 		
 		if (event.getType().equals(SFSEvent.LOGIN)) {
+			sfsUser = (User) event.getArguments().get("user");
+			
 			logger.debug("LOGIN SUCCESSFULLY");
+			
 			sfs.send(new JoinRoomRequest(Request.LOBBY_ROOM));
 		}else if(event.getType().equals(SFSEvent.LOGIN_ERROR)) {
 			logger.debug("LOGIN ERROR");
@@ -130,5 +134,8 @@ public class EventListener implements IEventListener{
 		}
 	}
 
+	public void sendMsg(String msg) {
+		sfs.send(new PublicMessageRequest(msg, new SFSObject(), sfs.getLastJoinedRoom()));
+	}
 	
 }
