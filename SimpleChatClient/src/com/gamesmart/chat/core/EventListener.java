@@ -1,5 +1,7 @@
 package com.gamesmart.chat.core;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 
 import com.gamesmart.chat.io.EventVariable;
@@ -14,12 +16,16 @@ import sfs2x.client.SmartFox;
 import sfs2x.client.core.BaseEvent;
 import sfs2x.client.core.IEventListener;
 import sfs2x.client.core.SFSEvent;
+import sfs2x.client.entities.SFSUser;
+import sfs2x.client.entities.User;
+import sfs2x.client.entities.variables.UserVariable;
 import sfs2x.client.requests.JoinRoomRequest;
 import sfs2x.client.requests.LoginRequest;
 
 public class EventListener implements IEventListener{
 	Logger logger = Logger.getLogger(EventListener.class);
 	private SmartFox sfs;
+	private User sfsUser;
 	private PlayerState playerState;
 	private static EventListener listener;
 	
@@ -45,16 +51,42 @@ public class EventListener implements IEventListener{
 	public void dispatch(BaseEvent event) throws SFSException {
 		getBaseEventResponse(event);
 		
+		if (event.getType().equals(SFSEvent.USER_VARIABLES_UPDATE)) {
+            SFSUser user= (SFSUser) event.getArguments().get("user");
+            if (sfsUser == null&&user.isItMe()) {
+                sfsUser =user;
+            }
+            if (user.isItMe()){
+                List changedVars = (List) event.getArguments().get("changedVars");
+                updateUserVariable(event, changedVars);
+            }
+        }
+		
 		if(event.getType().equals(SFSEvent.EXTENSION_RESPONSE)) {
 			String cmd = String.valueOf(event.getArguments().get("cmd"));
             ISFSObject responseParams = (SFSObject) event.getArguments().get("params");
-			getCmdResponse(cmd,responseParams);
+            SFSUser user= (SFSUser) event.getArguments().get("user");
+			getCmdResponse(cmd,responseParams,user);
 		}
 	}
 
-	private void getCmdResponse(String cmd, ISFSObject responseParams) {
-		if(EventVariable.ON_LOGIN.equals(cmd)) {
-			
+	protected void updateUserVariable(BaseEvent event, List changedVars) {
+		if (changedVars.contains(EventVariable.USER_ALIAS_NAME)){
+			String aliasName = getUserVariable(EventVariable.USER_ALIAS_NAME).getStringValue();
+			playerState.getPlayerVO().setAlias(aliasName);
+		}
+	}
+	
+	protected UserVariable getUserVariable(String variableName) {
+        return sfsUser.getVariable(variableName);
+    }
+	
+	private void getCmdResponse(String cmd, ISFSObject responseParams, SFSUser user) {
+		if(EventVariable.ON_PUBLIC_MESSAGE.equals(cmd)) {
+			if(user!=null && !user.isItMe()) {
+				String msg = responseParams.getUtfString("msg").trim();
+				SimpleChatClient.getInstance().appendMsg(msg);
+			}
 		}
 	}
 

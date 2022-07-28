@@ -6,13 +6,14 @@ import sfs2x.client.SmartFox;
 import sfs2x.client.core.SFSEvent;
 
 abstract class BaseClient {
-	private PlayerState playerState;
+	public SmartFox sfs;
+	protected PlayerState playerState;
 	
-	public BaseClient(PlayerState playerState) {
-		this.playerState = playerState;
-	}
+	abstract void sendMsg(String msg);
+	abstract void appendMsg(String msg);
 
 	public void connect(SmartFox sfs,String ip,int port) {
+		this.sfs = sfs;
 		EventListener listener = EventListener.getInstance();
 		listener.init(sfs,playerState);
 		

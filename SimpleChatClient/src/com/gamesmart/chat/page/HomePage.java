@@ -24,16 +24,17 @@ import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
-import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
-import com.gamesmart.chat.vo.MessageVO;
+import org.apache.log4j.Logger;
+
+import com.gamesmart.chat.core.SimpleChatClient;
 
 public class HomePage extends JFrame{
+	private static Logger logger = Logger.getLogger(HomePage.class);
+	
 	private static JTextPane chatArea;
 	private static JTextArea chatInputArea;
 	private static JButton sendMsgButton;
@@ -164,11 +165,11 @@ public class HomePage extends JFrame{
 				}else if(e.getKeyCode() == KeyEvent.VK_ENTER) {
 					e.consume();
 					try {
-						String text = chatInputArea.getText().trim();
-						if(text == null || text.length() == 0 || text.length()>=100) {return;}
-						resetTextArea("晓萌",chatInputArea.getText(),getRightStyle(),getRightBlackStyle());
+						String msg = chatInputArea.getText().trim();
+						if(msg == null || msg.length() == 0 || msg.length()>=100) {return;}
+						resetTextArea(SimpleChatClient.getInstance().getPlayerState().getPlayerVO().getAlias(),msg,getRightStyle(),getRightBlackStyle());
 						chatArea.selectAll();
-						sendMsg();
+						sendMsg(msg);
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
@@ -188,12 +189,12 @@ public class HomePage extends JFrame{
 		sendMsgButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String text = chatInputArea.getText().trim();
-				if(text == null || text.length() == 0 || text.length()>=100) {return;}
+				String msg = chatInputArea.getText().trim();
+				if(msg == null || msg.length() == 0 || msg.length()>=100) {return;}
 				try {
-					resetTextArea("晓萌",chatInputArea.getText(),getRightStyle(),getRightBlackStyle()); 
+					resetTextArea(SimpleChatClient.getInstance().getPlayerState().getPlayerVO().getAlias(),msg,getRightStyle(),getRightBlackStyle()); 
 					chatArea.selectAll();
-					sendMsg();
+					sendMsg(msg);
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
@@ -254,29 +255,27 @@ public class HomePage extends JFrame{
 		return right;
 	}
 	
-	/*
-	 * 5430_msg_[还行]_msg
-	 */
-	private static void sendMsg() {
-		//TODO
+	private static void sendMsg(String msg) {
+		SimpleChatClient client = SimpleChatClient.getInstance();
+		client.sendMsg(msg);
 	}
 	
-	/*
-	 * @param msg format "from[5430_msg_[还行]_msg,...,...]from,"
-	 */
 	public static void resetTextArea(String msg) {
 		try {
-			msg = msg.substring(msg.indexOf("msg_[")+5, msg.indexOf("]_msg"));
 			resetTextArea("永强",msg,getLeftStyle(),getRightBlackStyle());
 			chatArea.selectAll();
 			setMaxValueBar();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("",e);
 		}
 	}
 	
 	private static void setMaxValueBar() {
 		JScrollBar scrollBar = subPanelb_a_1_scroll.getVerticalScrollBar();
 		scrollBar.setValue(scrollBar.getMaximum());
+	}
+	
+	public void appendMsg(String msg) {
+		resetTextArea(msg);	
 	}
 }

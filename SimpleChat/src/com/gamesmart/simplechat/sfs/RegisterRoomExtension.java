@@ -7,7 +7,8 @@ import com.smartfoxserver.v2.core.SFSEventType;
 import com.smartfoxserver.v2.extensions.SFSExtension;
 
 public class RegisterRoomExtension extends SFSExtension{
-
+	private String ON_PUBLIC_MESSAGE = "on_public_message";
+	
 	@Override
 	public void init() {
 		addEventHandler(SFSEventType.USER_DISCONNECT, UserLogoutHandler.class);

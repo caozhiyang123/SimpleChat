@@ -347,7 +347,8 @@ public class LoginPage extends JFrame {
     
     private void connectSfs(String userName, String pass) {
     	PlayerState playerState = SimpleChatUtil.createPlayerState(userName,pass);
-    	SimpleChatClient client = new SimpleChatClient(playerState);
+    	SimpleChatClient client = SimpleChatClient.getInstance();
+    	client.init(playerState);
     	client.connect(new SmartFox(), Request.IP, Request.PORT);
     }
     
