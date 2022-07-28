@@ -4,6 +4,7 @@ public class PlayerVO {
 	private long userId;
 	private String pass;//MD5
 	private String aliasName;
+	private String userInfo;
 	
 	public PlayerVO(long userId, String pass) {
 		this.userId = userId;
@@ -28,6 +29,14 @@ public class PlayerVO {
 	}
 	public String getAlias() {
 		return this.aliasName;
+	}
+
+	public void setInfo(String userInfo) {
+		this.userInfo = userInfo;
+	}
+
+	public String getInfo() {
+		return userInfo;
 	}
 
 }

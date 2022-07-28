@@ -356,7 +356,8 @@ public class LoginPage extends JFrame {
     	loginPage.dispose();
     	
     	//open chat page
-    	HomePage.getInstance();
+    	HomePage homePage = HomePage.getInstance();
+    	homePage.appendMsg(SimpleChatClient.getInstance().getPlayerState().getPlayerVO().getInfo());
     }
     
     public void loginFailed() {

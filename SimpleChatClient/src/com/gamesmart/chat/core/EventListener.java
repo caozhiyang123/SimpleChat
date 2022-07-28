@@ -73,7 +73,9 @@ public class EventListener implements IEventListener{
 	protected void updateUserVariable(BaseEvent event, List changedVars) {
 		if (changedVars.contains(EventVariable.USER_ALIAS_NAME)){
 			String aliasName = getUserVariable(EventVariable.USER_ALIAS_NAME).getStringValue();
+			String userInfo = getUserVariable(EventVariable.USER_INFO).getStringValue();
 			playerState.getPlayerVO().setAlias(aliasName);
+			playerState.getPlayerVO().setInfo(userInfo);
 		}
 	}
 	

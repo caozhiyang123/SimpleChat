@@ -56,10 +56,6 @@ public class HomePage extends JFrame{
 		return homePage;
 	}
 	
-	public static void main(String[] args) {
-		getInstance();
-	}
-
 	private void createHomePage() {
 		this.setTitle("GameSmartChat");
 		this.setPreferredSize(new Dimension(950, 632));

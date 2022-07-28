@@ -1,0 +1,21 @@
+{
+  "database": {
+      "sql": {
+        "driver": "com.mysql.cj.jdbc.Driver",
+        "url": "jdbc:mysql://127.0.0.1:3306/gms_analytics_db?rewriteBatchedStatements=true",
+        "user": "root",
+        "pass": "MyNewPass"
+      },
+      "mongo": {
+        "servers": [
+          {
+            "ip": "127.0.0.1",
+            "port": 27017
+          }
+        ],
+        "dbName": "doctorbingo",
+        "numberOfWrites": 1,
+        "connectionsPerHost": 200
+      }
+    }
+}

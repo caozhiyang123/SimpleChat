@@ -23,7 +23,7 @@ public class UserJoinRoomHandler extends BaseServerEventHandler {
 
 	@Override
 	public void handleServerEvent(ISFSEvent event) throws SFSException {
-		logger.info("join room");
+		logger.info("= = = join room = = = ");
 		User user = (User)event.getParameter(SFSEventParam.USER);
 		Long userId = Long.valueOf(user.getName());
 		
@@ -35,10 +35,11 @@ public class UserJoinRoomHandler extends BaseServerEventHandler {
 			PlayerVO playerVO = reply.getSession().getPlayerState().getPlayerVO();
 			List<UserVariable> userVariables = new ArrayList<UserVariable>();
 			userVariables.add(new SFSUserVariable("user_alias_name", playerVO.getAlias(),false,false));
+			userVariables.add(new SFSUserVariable("user_info", playerVO.toString(),false,false));
 			getApi().setUserVariables(user, userVariables,true,true);
 			logger.info("set userVariables,user_alias_name:"+playerVO.getAlias());
 		}else {
-			
+			logger.error("error:"+reply.getError());
 		}
 	}
 }
