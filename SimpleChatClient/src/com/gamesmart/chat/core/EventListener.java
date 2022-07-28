@@ -109,7 +109,7 @@ public class EventListener implements IEventListener{
 				sfs.send(new LoginRequest(
 						String.valueOf(playerState.getPlayerVO().getUserId()),
 						playerState.getPlayerVO().getPass(),
-						Request.LOBBY_ZONE,
+						Request.CHAT_ZONE,
 						sfsObject));
 			}else {
 				logger.debug("connection failed");
@@ -123,7 +123,7 @@ public class EventListener implements IEventListener{
 			
 			logger.debug("LOGIN SUCCESSFULLY");
 			
-			sfs.send(new JoinRoomRequest(Request.LOBBY_ROOM));
+			sfs.send(new JoinRoomRequest(Request.CHAT_ROOM));
 		}else if(event.getType().equals(SFSEvent.LOGIN_ERROR)) {
 			logger.debug("LOGIN ERROR");
 		}
