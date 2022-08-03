@@ -12,6 +12,8 @@ import java.awt.GridLayout;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
@@ -45,6 +47,7 @@ public class LoginPage extends JFrame {
     private JLabel usernameWarningLabel;
     private JLabel passWarningLabel;
     private JLabel loginLabel;
+    private JButton loginButton;
 
     private LoginPage() {
         createLoginPage();
@@ -81,7 +84,6 @@ public class LoginPage extends JFrame {
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent windowevent) {
-                //System.exit(0);
             	loginPage.dispose();
             }
         });
@@ -263,12 +265,32 @@ public class LoginPage extends JFrame {
         fifthRow.setBackground(Color.GRAY);
         panel.add(fifthRow);
 
-        JButton loginButton = new JButton("登  录");
+        loginButton = new JButton("登  录");
         loginButton.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.WHITE));
         loginButton.setFont(new Font(null, Font.CENTER_BASELINE, 30));
         loginButton.setHorizontalAlignment(JLabel.CENTER);
         loginButton.setForeground(Color.WHITE);
         loginButton.setBackground(Color.BLUE);
+        loginButton.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				loginButton.setEnabled(false);
+				
+			}
+		});
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -279,7 +301,7 @@ public class LoginPage extends JFrame {
                 }
                 //use regex to check if it is digit
                 if (userName == null || !userName.matches("-?\\d+(\\.\\d+)?")) {
-                    usernameWarningLabel.setText("非法警告< 账号不能为空 >");
+                    usernameWarningLabel.setText("非法警告< 账号不能为非数字 >");
                     passWarningLabel.setText("");
                     return;
                 }
@@ -321,7 +343,6 @@ public class LoginPage extends JFrame {
                 System.out.println("userName:" + userName + " ,pass:" + passSb.toString());
                 connectSfs(Long.valueOf(userName),passSb.toString());
             }
-
         });
         fifthRow.add(loginButton, BorderLayout.CENTER);
         
@@ -359,8 +380,8 @@ public class LoginPage extends JFrame {
     	HomePage.getInstance();
     }
     
-    public void loginFailed() {
-        loginLabel.setText("账号或密码错误也可能是网络错误");
+    public void loginFailed(String error) {
+        loginLabel.setText(error);
     }
 
     private boolean verifyPassword() {

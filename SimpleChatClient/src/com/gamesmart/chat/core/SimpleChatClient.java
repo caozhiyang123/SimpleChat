@@ -30,8 +30,8 @@ public class SimpleChatClient extends BaseClient{
 	}
 	
 	@Override
-	public void sendMsg(String msg) {
-		EventListener.getInstance().sendMsg(msg);
+	public boolean sendMsg(String msg) {
+		return EventListener.getInstance().sendMsg(msg);
 	}
 
 	@Override

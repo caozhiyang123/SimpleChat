@@ -1,6 +1,9 @@
 package com.gamesmart.chat.core;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
@@ -58,9 +61,13 @@ public class EventListener implements IEventListener{
             if (sfsUser == null&&user.isItMe()) {
                 sfsUser =user;
             }
+            List changedVars = (List) event.getArguments().get("changedVars");
             if (user.isItMe()){
-                List changedVars = (List) event.getArguments().get("changedVars");
                 updateUserVariable(event, changedVars);
+            }else if (changedVars.contains(EventVariable.USER_ALIAS_NAME)){
+        		String aliasName = user.getVariable(EventVariable.USER_ALIAS_NAME).getStringValue();
+        		long userId = (long)(double)user.getVariable(EventVariable.USER_ID).getDoubleValue();
+        		HomePage.getInstance().createUserButton(aliasName,userId);
             }
         }
 		
@@ -74,11 +81,13 @@ public class EventListener implements IEventListener{
 	protected void updateUserVariable(BaseEvent event, List changedVars) {
 		if (changedVars.contains(EventVariable.USER_ALIAS_NAME)){
 			String aliasName = getUserVariable(EventVariable.USER_ALIAS_NAME).getStringValue();
+			long userId = (long)(double)getUserVariable(EventVariable.USER_ID).getDoubleValue();
 			String userInfo = getUserVariable(EventVariable.USER_INFO).getStringValue();
 			playerState.getPlayerVO().setAlias(aliasName);
 			playerState.getPlayerVO().setInfo(userInfo);
 			
 			HomePage.getInstance().appendMsg(userInfo);
+			HomePage.getInstance().createUserButton(SimpleChatClient.getInstance().getPlayerState().getPlayerVO().getAlias(),userId);
 		}
 	}
 	
@@ -89,9 +98,20 @@ public class EventListener implements IEventListener{
 	private void getCmdResponse(String cmd, ISFSObject responseParams) {
 		if(EventVariable.ON_PUBLIC_MESSAGE.equals(cmd)) {
 			long sendId = responseParams.getLong("send_id");
+			String alias = "default";
 			if(playerState.getPlayerVO().getUserId() != sendId) {
 				String msg = responseParams.getUtfString("msg").trim();
 				SimpleChatClient.getInstance().appendMsg(msg);
+			}
+		}else if(EventVariable.ON_JOIN_ROOM.equals(cmd)) {
+			Boolean res = responseParams.getBool("result");
+			if(!res) {
+				String error = responseParams.getUtfString("error");
+				System.out.println(error);
+				LoginPage.getInstance().loginFailed(error);
+			}else {
+				//TODO do some init ,change button state
+				LoginPage.getInstance().loginSuccessed();
 			}
 		}
 	}
@@ -129,18 +149,51 @@ public class EventListener implements IEventListener{
 		}
 		
 		if (event.getType().equals(SFSEvent.ROOM_JOIN)) {
-			//TODO do some init ,change button state
-			LoginPage.getInstance().loginSuccessed();
 			//open publish message page
 			logger.debug("ROOM JOIN SUCCESSFULLY");
 		}else if (event.getType().equals(SFSEvent.ROOM_JOIN_ERROR)) {
 			logger.debug("ROOM JOIN FAILED");
-			LoginPage.getInstance().loginFailed();
+			LoginPage.getInstance().loginFailed("账号或密码错误，也可能是网络错误，请重试");
 		}
 	}
 
-	public void sendMsg(String msg) {
-		sfs.send(new PublicMessageRequest(msg, new SFSObject(), sfs.getLastJoinedRoom()));
+	public boolean sendMsg(String msg) {
+		boolean res = false;
+		try {
+			//TODO
+			if(sfs.isConnected()) {
+				sfs.send(new PublicMessageRequest(msg, new SFSObject(), sfs.getLastJoinedRoom()));
+				res = true;
+			}else {
+				logger.error("sfs is disconnected");
+			}
+			return res;
+		} catch (Exception e) {
+			logger.error("send msg error:", e);
+		}
+		return res;
+	}
+
+	public void createBatchJob() {
+		new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(new UserListListener(), 30, 10, TimeUnit.SECONDS);
+	}
+	
+	class UserListListener implements Runnable{
+
+		@Override
+		public void run() {
+			List<User> userList = sfs.getUserManager().getUserList();
+			List<Long> joinedUsers = new ArrayList<Long>();
+			if(userList != null) {
+				for (User user : userList) {
+					long userId = Long.valueOf(user.getName());
+					joinedUsers.add(userId);
+				}
+			}
+			HomePage.getInstance().updateUserList(joinedUsers);
+			System.out.println(joinedUsers.toString());
+		}
+		
 	}
 	
 }

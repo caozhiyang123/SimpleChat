@@ -8,8 +8,12 @@ public class Session {
 	
 	public Reply login(Request request) {
 		Reply reply = new Reply();
-		PlayerVO playerVO = DAOFactory.getPlayerDAO().findPlayerVO(request.getUserId());
+		//PlayerVO playerVO = DAOFactory.getPlayerDAO().findPlayerVO(request.getUserId());
+		PlayerVO playerVO = new PlayerVO(request.getUserId(),String.valueOf(request.getUserId()));
 		playerState.setPlayerVO(playerVO);
+		if(playerVO == null) {
+			reply.setError(Reply.Error.userNotExist);
+		}
 		reply.setSession(this);
 		return reply;
 	}

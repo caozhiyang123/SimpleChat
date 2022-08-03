@@ -5,14 +5,17 @@ public class Reply {
 	private Error error = Error.none;
 
 	public enum Error{
-		none
+		none,
+		userNotExist
 	}
 	
 
 	public Error getError() {
 		return error;
 	}
-
+	public void setError(Error error) {
+		this.error = error;
+	}
 
 	public void setSession(Session session) {
 		this.session = session;

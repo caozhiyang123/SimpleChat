@@ -24,6 +24,9 @@ public class PlayerVO {
 		this.userId = userId;
 		this.alias = alias;
 	}
+	public long getUserId() {
+		return userId;
+	}
 	public String getAlias() {
 		return alias;
 	}
