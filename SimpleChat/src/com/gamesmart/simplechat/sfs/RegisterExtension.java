@@ -25,9 +25,7 @@ public class RegisterExtension extends SFSExtension{
 		App.getInstance();
 		addRequestHandler(ROOM_CREATED, RoomCreatedHandler.class);
 
-		//addEventHandler(SFSEventType.USER_JOIN_ZONE, JoinZoneEventHandler.class);
-		//custom login
-		addEventHandler(SFSEventType.USER_LOGIN,JoinZoneEventHandler.class);
+		addEventHandler(SFSEventType.USER_JOIN_ZONE, JoinZoneEventHandler.class);
 		addEventHandler(SFSEventType.USER_LOGOUT, UserLogoutHandler.class);
 		addEventHandler(SFSEventType.USER_DISCONNECT, UserLogoutHandler.class);
 		addEventHandler(SFSEventType.ROOM_REMOVED, RoomRemovedHandler.class);

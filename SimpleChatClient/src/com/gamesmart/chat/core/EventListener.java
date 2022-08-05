@@ -104,7 +104,7 @@ public class EventListener implements IEventListener{
 				SimpleChatClient.getInstance().appendMsg(msg);
 				new Thread(()->verifyUserButton(sendId,alias)).start();
 			}
-		}else if(EventVariable.ON_JOIN_ROOM.equals(cmd)) {
+		}else if(EventVariable.ON_JOIN_ZONE.equals(cmd)) {
 			Boolean res = responseParams.getBool("result");
 			if(!res) {
 				String error = responseParams.getUtfString("error");
@@ -137,10 +137,7 @@ public class EventListener implements IEventListener{
 				System.out.println(playerState.getPlayerVO().getPass());
 				
 				sfs.send(new LoginRequest(
-						String.valueOf(playerState.getPlayerVO().getUserId()),
-						playerState.getPlayerVO().getPass(),
-						Request.CHAT_ZONE,
-						sfsObject));
+						String.valueOf(playerState.getPlayerVO().getUserId()),"",Request.CHAT_ZONE));
 			}else {
 				logger.debug("connection failed");
 			}

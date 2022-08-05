@@ -27,6 +27,8 @@ public class Session {
 	}
 
 	public Reply doRequest(Request request) {
-		return new Reply();
+		Reply reply = new Reply();
+		reply.setSession(this);
+		return reply;
 	}
 }
