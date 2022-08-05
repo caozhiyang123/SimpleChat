@@ -25,13 +25,13 @@ public class RoomManager {
 		List<CreateRoomSettings> rooms =new ArrayList<>();
 		CreateRoomSettings settings = new CreateRoomSettings();
 		settings.setName("chatRoom");
-		settings.setMaxUsers(100);
-		settings.setGame(false);
+		settings.setMaxVariablesAllowed(30);
+		settings.setGame(true);
 		settings.setUseWordsFilter(true);
 		settings.setExtension(new CreateRoomSettings.RoomExtensionSettings("SimpleChatExtension","com.gamesmart.simplechat.sfs.RegisterRoomExtension"));
 		settings.setDynamic(true);
-		settings.setMaxVariablesAllowed(30);
 		settings.setAutoRemoveMode(SFSRoomRemoveMode.NEVER_REMOVE);
+		settings.setMaxUsers(100);
         rooms.add(settings);
         return rooms;
 	}

@@ -28,6 +28,7 @@ abstract class BaseClient {
 		sfs.addEventListener(SFSEvent.ROOM_VARIABLES_UPDATE, listener);
 		sfs.addEventListener(SFSEvent.USER_VARIABLES_UPDATE, listener);
 		sfs.addEventListener(SFSEvent.USER_ENTER_ROOM, listener);
+		sfs.addEventListener(SFSEvent.USER_EXIT_ROOM, listener);
 		
 		sfs.addEventListener(SFSEvent.CONNECTION_ATTEMPT_HTTP, listener);
 		sfs.addEventListener(SFSEvent.CONNECTION_RETRY, listener);
