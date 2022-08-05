@@ -24,7 +24,7 @@ public class RoomManager {
 	public List<CreateRoomSettings> creatRoom() {
 		List<CreateRoomSettings> rooms =new ArrayList<>();
 		CreateRoomSettings settings = new CreateRoomSettings();
-		settings.setName("lobby room");
+		settings.setName("chatRoom");
 		settings.setMaxUsers(100);
 		settings.setGame(false);
 		settings.setUseWordsFilter(true);

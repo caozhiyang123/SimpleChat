@@ -6,7 +6,8 @@ public class Reply {
 
 	public enum Error{
 		none,
-		userNotExist
+		userNotExist,
+		userNotLogin
 	}
 	
 

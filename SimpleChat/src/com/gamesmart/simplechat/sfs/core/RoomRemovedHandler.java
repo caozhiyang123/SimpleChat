@@ -1,6 +1,8 @@
 package com.gamesmart.simplechat.sfs.core;
 
-import com.gamesmart.simplechat.enghine.core.Application;
+import org.apache.log4j.Logger;
+
+import com.gamesmart.simplechat.enghine.core.App;
 import com.gamesmart.simplechat.enghine.io.Request;
 import com.gamesmart.simplechat.enghine.io.RequestVariable;
 import com.smartfoxserver.v2.core.ISFSEvent;
@@ -10,7 +12,8 @@ import com.smartfoxserver.v2.exceptions.SFSException;
 import com.smartfoxserver.v2.extensions.BaseServerEventHandler;
 
 public class RoomRemovedHandler extends BaseServerEventHandler {
-
+	Logger logger = Logger.getLogger(RoomRemovedHandler.class);
+	
 	@Override
 	public void handleServerEvent(ISFSEvent event) throws SFSException {
 		User user = (User)event.getParameter(SFSEventParam.USER);
@@ -19,7 +22,8 @@ public class RoomRemovedHandler extends BaseServerEventHandler {
 		Request request = new Request();
 		request.setCmd(RequestVariable.LOGOUT);
 		request.setUserId(userId);
-		Application.getInstance().getSessionController().logout(request);
+		//App.getInstance().getSessionController().logout(request);
+		logger.debug(" = = room removed = = ");
 	}
 
 }

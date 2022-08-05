@@ -55,7 +55,7 @@ public class ConfigConnector
 
     public List<String> readContentFolder()
     {
-        File folder = new File(Application.CONFIG_DIR + MACHINE_CONFIG);
+        File folder = new File(App.CONFIG_DIR + MACHINE_CONFIG);
         boolean exists = folder.exists();
         File[] listOfFiles = folder.listFiles();
         List<String> list = new ArrayList<String>();
@@ -86,7 +86,7 @@ public class ConfigConnector
     {
         try
         {
-            FileReader reader = new FileReader(Application.CONFIG_DIR + filename);
+            FileReader reader = new FileReader(App.CONFIG_DIR + filename);
             JSONParser parser = new JSONParser();
             jsonObject = (JSONObject) parser.parse(reader);
             return jsonObject;

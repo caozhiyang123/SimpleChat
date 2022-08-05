@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 
-import com.gamesmart.simplechat.enghine.core.Application;
+import com.gamesmart.simplechat.enghine.core.App;
 import com.gamesmart.simplechat.enghine.core.DBConnector;
 import com.gamesmart.simplechat.enghine.util.ChatUtil;
 import com.gamesmart.simplechat.enghine.vo.PlayerVO;

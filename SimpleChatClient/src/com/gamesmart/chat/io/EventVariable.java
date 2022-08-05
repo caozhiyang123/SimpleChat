@@ -8,4 +8,5 @@ public class EventVariable {
 	public static final String USER_ID = "user_id";
 	public static final String USER_INFO = "user_info";
 	public static final String ON_JOIN_ROOM = "on_join_room";
+	public static final String ERROR = "error";
 }

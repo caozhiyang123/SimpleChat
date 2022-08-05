@@ -35,7 +35,7 @@ public class DBConnector
 
     public static DBConnector getInstance()
     {
-        return Application.getInstance().getDBController().getDefaultConnector();
+        return App.getInstance().getDBController().getDefaultConnector();
     }
 
     public Connection getConnection()

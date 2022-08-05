@@ -495,7 +495,7 @@ public class HomePage extends JFrame{
 			boolean exist = false;
 			for (Map.Entry<Long, JButton> map: this.joinedUsers.entrySet()) {
 				Long userId = map.getKey();
-				if(joinedUserId == userId) {
+				if((long)joinedUserId == (long)userId) {
 					exist = true;
 					break;
 				}
@@ -521,5 +521,9 @@ public class HomePage extends JFrame{
 				value.getParent().remove(value);
 			}
 		}
+	}
+	
+	public void verifyUserButton(long sendId, String alias) {
+		
 	}
 }

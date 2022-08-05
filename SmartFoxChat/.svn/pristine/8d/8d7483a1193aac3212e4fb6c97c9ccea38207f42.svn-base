@@ -24,6 +24,7 @@ public class ChatClient{
 	
 	static {
 		new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(() -> keepAlive(), 1, 1000, TimeUnit.MILLISECONDS);
+		//Request queue
 		new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(new SendMsgQueue(10), 1, 1, TimeUnit.SECONDS);
 	}
 	

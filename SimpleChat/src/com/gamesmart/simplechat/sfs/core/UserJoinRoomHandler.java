@@ -5,10 +5,11 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.gamesmart.simplechat.enghine.core.Application;
+import com.gamesmart.simplechat.enghine.core.App;
 import com.gamesmart.simplechat.enghine.io.Reply;
 import com.gamesmart.simplechat.enghine.io.Request;
 import com.gamesmart.simplechat.enghine.io.RequestVariable;
+import com.gamesmart.simplechat.enghine.io.SessionController;
 import com.gamesmart.simplechat.enghine.vo.PlayerVO;
 import com.smartfoxserver.v2.core.ISFSEvent;
 import com.smartfoxserver.v2.core.SFSEventParam;
@@ -26,11 +27,10 @@ public class UserJoinRoomHandler extends BaseServerEventHandler {
 	public void handleServerEvent(ISFSEvent event) throws SFSException {
 		User user = (User)event.getParameter(SFSEventParam.USER);
 		Long userId = Long.valueOf(user.getName());
-		
 		Request request = new Request();
 		request.setCmd(RequestVariable.LOGIN);
 		request.setUserId(userId);
-		Reply reply = Application.getInstance().getSessionController().login(request);
+		Reply reply = App.getInstance().getSessionController().login(request);
 		SFSObject returnObj = new SFSObject();
 		if(reply.getError() == Reply.Error.none) {
 			PlayerVO playerVO = reply.getSession().getPlayerState().getPlayerVO();
@@ -47,5 +47,6 @@ public class UserJoinRoomHandler extends BaseServerEventHandler {
 			returnObj.putUtfString("error", reply.getError().toString());
 			this.send("on_join_room", returnObj, user);
 		}
+		logger.debug("= = join room = =");
 	}
 }

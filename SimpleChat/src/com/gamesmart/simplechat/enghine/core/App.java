@@ -1,11 +1,15 @@
 package com.gamesmart.simplechat.enghine.core;
 
+import org.apache.log4j.Logger;
+
 import com.gamesmart.simplechat.enghine.controller.DBController;
 import com.gamesmart.simplechat.enghine.io.SessionController;
 
-public class Application {
+public class App {
+	private static Logger logger = Logger.getLogger(App.class);
+	
 	public static String CONFIG_DIR;
-	private static Application application = null;
+	private static App application;
 	private SessionController sessionController;
 	private DBController dbController;
 	private static boolean IS_SFS = true;//set false for local test
@@ -22,14 +26,15 @@ public class Application {
         }
     }
 	
-	private Application() {}
+	private App() {}
 	
-	public static Application getInstance() {
+	public static App getInstance() {
 		if(application == null) {
-			synchronized(Application.class) {
+			synchronized(App.class) {
 				if(application == null) {
-					application = new Application();
+					application = new App();
 					application.init();
+					logger.debug("= = = init = = =");
 				}
 			}
 		}
