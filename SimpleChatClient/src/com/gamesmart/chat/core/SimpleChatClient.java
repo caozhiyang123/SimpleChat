@@ -30,12 +30,16 @@ public class SimpleChatClient extends BaseClient{
 	}
 	
 	@Override
-	public boolean sendMsg(String msg) {
-		return EventListener.getInstance().sendMsg(msg);
+	public boolean sendMsg(String msg,long sendTo) {
+		return EventListener.getInstance().sendMsg(msg,sendTo);
 	}
 
 	@Override
-	public void appendMsg(String msg) {
-		HomePage.getInstance().appendMsg(msg);
+	public void appendMsg(String msg, String alias, long sendId) {
+		HomePage.getInstance().appendMsg(msg,alias,sendId);
+	}
+
+	public void updateAlias(String alias) {
+		EventListener.getInstance().updateAlias(alias);
 	}
 }

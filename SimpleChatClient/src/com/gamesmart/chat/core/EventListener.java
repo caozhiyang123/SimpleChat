@@ -12,6 +12,7 @@ import com.gamesmart.chat.io.Request;
 import com.gamesmart.chat.page.HomePage;
 import com.gamesmart.chat.page.LoginPage;
 import com.gamesmart.chat.vo.PlayerState;
+import com.gamesmart.chat.vo.UserVO;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 import com.smartfoxserver.v2.exceptions.SFSException;
@@ -22,6 +23,7 @@ import sfs2x.client.core.IEventListener;
 import sfs2x.client.core.SFSEvent;
 import sfs2x.client.entities.SFSUser;
 import sfs2x.client.entities.User;
+import sfs2x.client.entities.variables.SFSUserVariable;
 import sfs2x.client.entities.variables.UserVariable;
 import sfs2x.client.requests.JoinRoomRequest;
 import sfs2x.client.requests.LoginRequest;
@@ -62,10 +64,12 @@ public class EventListener implements IEventListener{
             List changedVars = (List) event.getArguments().get("changedVars");
             if (user.isItMe()){
                 updateUserVariable(event, changedVars);
-            }else if (changedVars.contains(EventVariable.USER_ALIAS_NAME)){
+                System.out.println("update updateUserVariable");
+            }else{
         		String aliasName = user.getVariable(EventVariable.USER_ALIAS_NAME).getStringValue();
         		long userId = (long)(double)user.getVariable(EventVariable.USER_ID).getDoubleValue();
         		HomePage.getInstance().createUserButton(aliasName,userId);
+        		System.out.println("userId:"+userId+",aliasName:"+aliasName);
             }
         }
 		
@@ -86,7 +90,7 @@ public class EventListener implements IEventListener{
 			playerState.getPlayerVO().setAlias(aliasName);
 			playerState.getPlayerVO().setInfo(userInfo);
 			
-			HomePage.getInstance().appendMsg(userInfo);
+			HomePage.getInstance().appendMsg(userInfo,aliasName,userId);
 			HomePage.getInstance().createUserButton(SimpleChatClient.getInstance().getPlayerState().getPlayerVO().getAlias(),userId);
 		}
 	}
@@ -101,7 +105,7 @@ public class EventListener implements IEventListener{
 			if(playerState.getPlayerVO().getUserId() != sendId) {
 				String msg = responseParams.getUtfString("msg").trim();
 				String alias = responseParams.getUtfString("alias").trim();
-				SimpleChatClient.getInstance().appendMsg(msg);
+				SimpleChatClient.getInstance().appendMsg(msg,alias,sendId);
 				new Thread(()->verifyUserButton(sendId,alias)).start();
 			}
 		}else if(EventVariable.ON_JOIN_ZONE.equals(cmd)) {
@@ -173,12 +177,13 @@ public class EventListener implements IEventListener{
 		}
 	}
 
-	public boolean sendMsg(String msg) {
+	public boolean sendMsg(String msg,long sendTo) {
 		boolean res = false;
 		try {
-			//TODO
 			if(sfs.isConnected()) {
-				sfs.send(new PublicMessageRequest(msg, new SFSObject(), sfs.getLastJoinedRoom()));
+				SFSObject sfsObject = new SFSObject();
+				sfsObject.putLong("send_to", sendTo);
+				sfs.send(new PublicMessageRequest(msg, sfsObject, sfs.getLastJoinedRoom()));
 				res = true;
 			}else {
 				logger.error("sfs is disconnected");
@@ -191,25 +196,29 @@ public class EventListener implements IEventListener{
 	}
 
 	public void createBatchJob() {
-		new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(new UserListListener(), 30, 10, TimeUnit.SECONDS);
+		new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(new UserListListener(), 5, 10, TimeUnit.SECONDS);
 	}
 	
 	class UserListListener implements Runnable{
-
 		@Override
 		public void run() {
 			List<User> userList = sfs.getUserManager().getUserList();
-			List<Long> joinedUsers = new ArrayList<Long>();
+			List<UserVO> joinedUsers = new ArrayList<UserVO>();
 			if(userList != null) {
 				for (User user : userList) {
 					long userId = Long.valueOf(user.getName());
-					joinedUsers.add(userId);
+					String alias = user.getVariable(EventVariable.USER_ALIAS_NAME).getStringValue();
+					UserVO userVO = new UserVO(userId,alias);
+					joinedUsers.add(userVO);
 				}
 			}
 			HomePage.getInstance().updateUserList(joinedUsers);
 			System.out.println(joinedUsers.toString());
 		}
+	}
+
+	public void updateAlias(String alias) {
+		//TODO
 		
 	}
-	
 }
