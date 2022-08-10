@@ -35,7 +35,6 @@ public class EventListener implements IEventListener{
 	private User sfsUser;
 	private PlayerState playerState;
 	private static EventListener listener;
-	
 	private EventListener() {}
 	
 	public static EventListener getInstance() {
@@ -85,13 +84,13 @@ public class EventListener implements IEventListener{
 	protected void updateUserVariable(BaseEvent event, List changedVars) {
 		if (changedVars.contains(EventVariable.USER_ALIAS_NAME)){
 			String aliasName = getUserVariable(EventVariable.USER_ALIAS_NAME).getStringValue();
-			long userId = (long)(double)getUserVariable(EventVariable.USER_ID).getDoubleValue();
+			long sendFrom = (long)(double)getUserVariable(EventVariable.USER_ID).getDoubleValue();
 			String userInfo = getUserVariable(EventVariable.USER_INFO).getStringValue();
 			playerState.getPlayerVO().setAlias(aliasName);
 			playerState.getPlayerVO().setInfo(userInfo);
 			
-			HomePage.getInstance().appendMsg(userInfo,aliasName,userId);
-			HomePage.getInstance().createUserButton(SimpleChatClient.getInstance().getPlayerState().getPlayerVO().getAlias(),userId);
+			HomePage.getInstance().appendMsg(userInfo,aliasName,sendFrom,0);
+			HomePage.getInstance().createUserButton(SimpleChatClient.getInstance().getPlayerState().getPlayerVO().getAlias(),sendFrom);
 		}
 	}
 	
@@ -101,12 +100,13 @@ public class EventListener implements IEventListener{
 	
 	private void getCmdResponse(String cmd, ISFSObject responseParams) {
 		if(EventVariable.ON_PUBLIC_MESSAGE.equals(cmd)) {
-			long sendId = responseParams.getLong("send_id");
-			if(playerState.getPlayerVO().getUserId() != sendId) {
+			long sendFrom = responseParams.getLong("send_id");
+			if(playerState.getPlayerVO().getUserId() != sendFrom) {
 				String msg = responseParams.getUtfString("msg").trim();
 				String alias = responseParams.getUtfString("alias").trim();
-				SimpleChatClient.getInstance().appendMsg(msg,alias,sendId);
-				new Thread(()->verifyUserButton(sendId,alias)).start();
+				long sendTo = responseParams.getLong("send_to");
+				SimpleChatClient.getInstance().appendMsg(msg,alias,sendFrom,sendTo);
+				new Thread(()->verifyUserButton(sendFrom,alias)).start();
 			}
 		}else if(EventVariable.ON_JOIN_ZONE.equals(cmd)) {
 			Boolean res = responseParams.getBool("result");

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -43,6 +44,7 @@ import org.apache.log4j.Logger;
 
 import com.gamesmart.chat.core.EventListener;
 import com.gamesmart.chat.core.SimpleChatClient;
+import com.gamesmart.chat.util.ToolTip;
 import com.gamesmart.chat.vo.UserVO;
 
 public class HomePage extends JFrame{
@@ -66,6 +68,9 @@ public class HomePage extends JFrame{
 	private static Map<Long,JButton> joinedUsers = new HashMap<Long,JButton>();
 	private static Map<Long,JTextPane> userPanes = new HashMap<>();
 	private static Map<Long,JButton> groups = new HashMap<Long,JButton>();
+	private static Map<Long,JTextPane> groupPanes = new HashMap<>();
+	
+	private static long defaultLobbyGroupId = 0L;
 	
 	private HomePage() {
 		createHomePage();
@@ -144,7 +149,7 @@ public class HomePage extends JFrame{
 		jScrollPane_a_a.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		subPanela_a_1.add(jScrollPane_a_a);
 		
-		createGroupButton("lobby");
+		createLobbyGroupButton("lobby");
 		//currentVisiblePane = lobbyChatArea;
 		
 		subPanela_b = new JPanel() {
@@ -267,6 +272,7 @@ public class HomePage extends JFrame{
 		lobbyChatArea.setEditable(false);
 		currentVisiblePane = lobbyChatArea;
 		currentActiveButton = lobbyGroupButton;
+		groupPanes.put(defaultLobbyGroupId, lobbyChatArea);
 		
 		subPanelb_a_1_scroll = new JScrollPane();
 		subPanelb_a_1_scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -381,15 +387,16 @@ public class HomePage extends JFrame{
 		return panel;
 	}
 
-	private static void createGroupButton(String name) {
+	private static void createLobbyGroupButton(String name) {
 		lobbyGroupButton = new JButton();
-		groups.put(0L,lobbyGroupButton);
+		groups.put(defaultLobbyGroupId,lobbyGroupButton);
 		lobbyGroupButton.setHorizontalAlignment(SwingConstants.LEFT);
 		lobbyGroupButton.setText(name);
 		lobbyGroupButton.setPreferredSize(new Dimension(200,30));
 		lobbyGroupButton.setBorder(BorderFactory.createLoweredBevelBorder());
 		lobbyGroupButton.setFont(new Font(null, Font.CENTER_BASELINE, 15));
 		lobbyGroupButton.setBackground(Color.GRAY);
+		lobbyGroupButton.setBackground(Color.GREEN);
 		lobbyGroupButton.setForeground(Color.WHITE);
 		lobbyGroupButton.addMouseListener(new MouseListener() {
 
@@ -577,7 +584,7 @@ public class HomePage extends JFrame{
 	}
 	
 	private static boolean sendMsg(String msg) {
-		long sendTo = 0;//default is send to lobby
+		long sendTo = defaultLobbyGroupId;//default is send to lobby
 		for (Map.Entry<Long, JButton> map: joinedUsers.entrySet()) {
 			if(currentActiveButton == map.getValue() && (long)map.getKey() == SimpleChatClient.getInstance().getPlayerState().getPlayerVO().getUserId()){
 				return true;//if it is self then send msg locally
@@ -600,15 +607,58 @@ public class HomePage extends JFrame{
 		}
 	}
 	
+	private void resetTextArea(String msg,String alias,JTextPane targetPane) {
+		try {
+			StyledDocument document = targetPane.getStyledDocument();
+			document.insertString(document.getLength(),"\n"+"["+alias+"]",getLeftStyle());
+			document.setParagraphAttributes(document.getLength(), 1, getLeftStyle(), false);
+			document.insertString(document.getLength(),"\n"+getCurrentDateTime(),getLeftStyle());
+			document.setParagraphAttributes(document.getLength(), 1, getLeftStyle(), false);
+			document.insertString(document.getLength(),"\n"+msg,getRightBlackStyle());
+			document.setParagraphAttributes(document.getLength(), 1, getLeftStyle(), false);
+			targetPane.selectAll();
+			setMaxValueBar();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	private static void setMaxValueBar() {
 		JScrollBar scrollBar = subPanelb_a_1_scroll.getVerticalScrollBar();
 		scrollBar.setValue(scrollBar.getMaximum());
 	}
 	
-	public void appendMsg(String msg, String alias, long sendId) {
-		resetTextArea(msg,alias);
+	public void appendMsg(String msg, String alias, long sendFrom,long sendTo) {
+		sendTips(msg,alias);
+
+		boolean isContinue = true;
+		long userId = SimpleChatClient.getInstance().getPlayerState().getPlayerVO().getUserId();
+		for (Map.Entry<Long, JTextPane> map: userPanes.entrySet()) {
+			if(map.getKey() == sendFrom && sendTo == userId) {
+				resetTextArea(msg,alias,map.getValue());
+				isContinue = false;
+				break;
+			}
+		}
+		if(!isContinue) {return;}
+		//send to group
+		for (Map.Entry<Long, JTextPane> map: groupPanes.entrySet()) {
+			if(map.getKey() == sendTo && sendTo != userId) {
+				resetTextArea(msg,alias,map.getValue());
+				break;
+			}
+		}
+		
 	}
 	
+	private void sendTips(String msg, String alias) {
+		ToolTip tip = ToolTip.getInstance();
+		StringBuilder sb = new StringBuilder(alias);
+		sb.append("\r\n");
+		sb.append(msg);
+		tip.setToolTip(new ImageIcon("config/msg.PNG"),sb.toString());
+	}
+
 	//lobby users list
 	public void createUserButton(String alias,long userId) {
 		createUser(alias,userId);

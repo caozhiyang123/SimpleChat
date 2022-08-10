@@ -34,6 +34,7 @@ public class PublicMessageHandler extends BaseServerEventHandler {
 			String alias = reply.getSession().getPlayerState().getPlayerVO().getAlias();
 			returnObject.putUtfString("alias", alias);
 			returnObject.putUtfString("msg", event.getParameter(SFSEventParam.MESSAGE).toString());
+			returnObject.putLong("send_to", ((SFSObject)event.getParameter(SFSEventParam.OBJECT)).getLong("send_to"));
 			this.send("on_public_message", returnObject, users);
 		}else {
 			returnObject.putUtfString("msg", reply.getError().toString());

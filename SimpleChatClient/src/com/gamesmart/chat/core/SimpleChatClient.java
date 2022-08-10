@@ -35,8 +35,8 @@ public class SimpleChatClient extends BaseClient{
 	}
 
 	@Override
-	public void appendMsg(String msg, String alias, long sendId) {
-		HomePage.getInstance().appendMsg(msg,alias,sendId);
+	public void appendMsg(String msg, String alias, long sendFrom,long sendTo) {
+		HomePage.getInstance().appendMsg(msg,alias,sendFrom,sendTo);
 	}
 
 	public void updateAlias(String alias) {

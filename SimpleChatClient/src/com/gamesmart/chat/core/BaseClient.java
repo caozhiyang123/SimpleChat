@@ -10,7 +10,7 @@ abstract class BaseClient {
 	protected PlayerState playerState;
 	
 	abstract boolean sendMsg(String msg,long sendTo);
-	abstract void appendMsg(String msg,String alias,long userId);
+	abstract void appendMsg(String msg,String alias,long sendFrom,long sendTo);
 
 	public void connect(SmartFox sfs,String ip,int port) {
 		this.sfs = sfs;
