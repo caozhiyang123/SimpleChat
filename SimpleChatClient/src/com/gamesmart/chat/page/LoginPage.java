@@ -132,8 +132,8 @@ public class LoginPage extends JFrame {
                 g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 int w = getWidth();
                 int h = getHeight();
-                Color color1 = Color.RED;
-                Color color2 = Color.GREEN;
+                Color color1 = Color.GRAY;
+                Color color2 = Color.WHITE;
                 GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
                 g2d.setPaint(gp);
                 g2d.fillRect(0, 0, w, h);

@@ -10,6 +10,7 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,6 +37,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
@@ -77,6 +79,10 @@ public class HomePage extends JFrame{
 		EventListener.getInstance().createBatchJob();
 	}
 	
+	public static void main(String[] args) {
+		getInstance();
+	}
+	
 	public static HomePage getInstance() {
 		if(homePage == null) {
 			synchronized (HomePage.class) {
@@ -94,6 +100,7 @@ public class HomePage extends JFrame{
 		 * this.getRootPane().setWindowDecorationStyle(JRootPane.FRAME);
 		 * com.sun.awt.AWTUtilities.setWindowOpacity(this, 0.85f);
 		 */
+		this.setIconImage(new ImageIcon("config/sysIcon.PNG").getImage());
 		this.setTitle("SimpleChat");
 		this.setPreferredSize(new Dimension(950, 632));
 		this.setSize(new Dimension(400, 400));
@@ -134,8 +141,8 @@ public class HomePage extends JFrame{
                 g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 int w = getWidth();
                 int h = getHeight();
-                Color color1 = Color.RED;
-                Color color2 = Color.GREEN;
+                Color color1 = Color.GRAY;
+                Color color2 = Color.WHITE;
                 GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
                 g2d.setPaint(gp);
                 g2d.fillRect(0, 0, w, h);
@@ -146,6 +153,13 @@ public class HomePage extends JFrame{
 		
 		JScrollPane jScrollPane_a_a = new JScrollPane(subPanela_a);
 		jScrollPane_a_a.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		//jScrollPane_a_a.getVerticalScrollBar().setBackground(new Color(34,202,77));
+		jScrollPane_a_a.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
+			@Override
+			protected void configureScrollBarColors() {
+				this.thumbColor = new Color(149,202,176);
+			}
+		});
 		jScrollPane_a_a.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		subPanela_a_1.add(jScrollPane_a_a);
 		
@@ -160,8 +174,8 @@ public class HomePage extends JFrame{
                 g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 int w = getWidth();
                 int h = getHeight();
-                Color color1 = Color.RED;
-                Color color2 = Color.GREEN;
+                Color color1 = Color.GRAY;
+                Color color2 = Color.WHITE;
                 GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
                 g2d.setPaint(gp);
                 g2d.fillRect(0, 0, w, h);
@@ -178,6 +192,12 @@ public class HomePage extends JFrame{
 		
 		jScrollPane_a_b = new JScrollPane(subPanela_b);
 		jScrollPane_a_b.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		jScrollPane_a_b.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
+			@Override
+			protected void configureScrollBarColors() {
+				this.thumbColor = new Color(149,202,176);
+			}
+		});
 		jScrollPane_a_b.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		subPanela_a_1.add(jScrollPane_a_b);
 //		subPanela_a_1.add(subPanela_b);
@@ -195,8 +215,8 @@ public class HomePage extends JFrame{
                 g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 int w = getWidth();
                 int h = getHeight();
-                Color color1 = Color.RED;
-                Color color2 = Color.GREEN;
+                Color color1 = Color.GRAY;
+                Color color2 = Color.WHITE;
                 GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
                 g2d.setPaint(gp);
                 g2d.fillRect(0, 0, w, h);
@@ -213,8 +233,8 @@ public class HomePage extends JFrame{
                 g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 int w = getWidth();
                 int h = getHeight();
-                Color color1 = Color.RED;
-                Color color2 = Color.GREEN;
+                Color color1 = Color.GRAY;
+                Color color2 = Color.WHITE;
                 GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
                 g2d.setPaint(gp);
                 g2d.fillRect(0, 0, w, h);
@@ -231,8 +251,8 @@ public class HomePage extends JFrame{
                 g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 int w = getWidth();
                 int h = getHeight();
-                Color color1 = Color.RED;
-                Color color2 = Color.GREEN;
+                Color color1 = Color.GRAY;
+                Color color2 = Color.WHITE;
                 GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
                 g2d.setPaint(gp);
                 g2d.fillRect(0, 0, w, h);
@@ -341,8 +361,8 @@ public class HomePage extends JFrame{
                 g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 int w = getWidth();
                 int h = getHeight();
-                Color color1 = Color.RED;
-                Color color2 = Color.GREEN;
+                Color color1 = Color.GRAY;
+                Color color2 = Color.WHITE;
                 GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
                 g2d.setPaint(gp);
                 g2d.fillRect(0, 0, w, h);
@@ -395,8 +415,7 @@ public class HomePage extends JFrame{
 		lobbyGroupButton.setPreferredSize(new Dimension(200,30));
 		lobbyGroupButton.setBorder(BorderFactory.createLoweredBevelBorder());
 		lobbyGroupButton.setFont(new Font(null, Font.CENTER_BASELINE, 15));
-		lobbyGroupButton.setBackground(Color.GRAY);
-		lobbyGroupButton.setBackground(Color.GREEN);
+		lobbyGroupButton.setBackground(new Color(34,202,77));
 		lobbyGroupButton.setForeground(Color.WHITE);
 		lobbyGroupButton.addMouseListener(new MouseListener() {
 
