@@ -23,3 +23,6 @@ ORGWebRTC/.settings
 WebRTC/.classpath
 WebRTC/.project
 WebRTC/.settings
+
+PostgreSQLClient/.project
+PostgreSQLClient/bin
