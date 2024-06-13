@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 
-import com.gamesmart.simplechat.enghine.core.ChatManager;
+import com.gamesmart.simplechat.enghine.core.LobbyManager;
 
 public class SessionController {
 	Logger logger = Logger.getLogger(SessionController.class);
@@ -22,7 +22,7 @@ public class SessionController {
 		sessions.put(userId, session);
 		logger.debug("= = login,userId:"+userId+",session:"+session);
 		
-		PlayerState playerState = ChatManager.getInstance().createPlayerState(userId);
+		PlayerState playerState = LobbyManager.getInstance().createPlayerState(userId);
 		session.setPlayerState(playerState);
 		return session.login(request);
 	}
@@ -42,7 +42,14 @@ public class SessionController {
 	}
 	
 	public void logout(Request request) {
+		Session session = sessions.get(request.getUserId());
+		logger.debug("= = user logout,userId:"+request.getUserId()+",session:"+sessions.toString());
+		if(session == null) {
+			logger.error(String.format(" - - - user not login - - -,user:%s",request.getUserId()));
+			return;
+		}
+		
+		session.doRequest(request);
 		sessions.remove(request.getUserId());
-		logger.debug("= = =logout,userId:"+request.getUserId());
 	}
 }

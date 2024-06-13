@@ -1,3 +1,5 @@
+sfs2x
+
 .metadata
 AdminExtension
 amazon-kinesis-data-analytics-java-examples
@@ -26,3 +28,11 @@ WebRTC/.settings
 
 PostgreSQLClient/.project
 PostgreSQLClient/bin
+
+SimpleChat/.classpath
+SimpleChat/.settings
+SimpleChat/log
+
+SimpleChatClient/.classpath
+SimpleChatClient/.settings
+SimpleChatClient/log

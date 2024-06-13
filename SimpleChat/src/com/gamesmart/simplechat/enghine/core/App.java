@@ -1,6 +1,7 @@
 package com.gamesmart.simplechat.enghine.core;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 import com.gamesmart.simplechat.enghine.controller.DBController;
 import com.gamesmart.simplechat.enghine.io.SessionController;
@@ -26,7 +27,14 @@ public class App {
         }
     }
 	
-	private App() {}
+	private App() {
+		if (!IS_SFS)
+        {
+			//init log sys
+			System.setProperty("WORKDIR", "log");
+			PropertyConfigurator.configure("config/log4j.properties");
+        }
+	}
 	
 	public static App getInstance() {
 		if(application == null) {
@@ -34,7 +42,6 @@ public class App {
 				if(application == null) {
 					application = new App();
 					application.init();
-					logger.debug("= = = init = = =");
 				}
 			}
 		}

@@ -8,6 +8,9 @@ public class EventVariable {
 	public static final String USER_ID = "user_id";
 	public static final String USER_INFO = "user_info";
 	public static final String ERROR = "error";
+	public static final String MATCHING = "matching";
+	public static final String INVITATION_ROOM = "invitation_room";
+	public static final String ROOM_PASS = "room_pass";
 	
 	//poker cards
 	public static final String ROB_LORD = "rob     lord";

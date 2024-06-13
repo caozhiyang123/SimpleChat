@@ -9,4 +9,8 @@ public class ChatUtil {
 		int index = (int)(Math.random()*size);
 		return names[index];
 	}
+
+	public static int getLevel() {
+		return RandomLocalThread.nextInt(1, 3);
+	}
 }

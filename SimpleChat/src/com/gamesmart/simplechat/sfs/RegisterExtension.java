@@ -5,16 +5,22 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.gamesmart.simplechat.enghine.core.App;
+import com.gamesmart.simplechat.enghine.core.LobbyManager;
 import com.gamesmart.simplechat.sfs.core.JoinZoneEventHandler;
 import com.gamesmart.simplechat.sfs.core.PublicMessageHandler;
 import com.gamesmart.simplechat.sfs.core.RoomCreatedHandler;
 import com.gamesmart.simplechat.sfs.core.RoomRemovedHandler;
 import com.gamesmart.simplechat.sfs.core.UserLogoutHandler;
+import com.gamesmart.simplechat.sfs.listener.LobbyListener;
 import com.gamesmart.simplechat.sfs.manager.RoomManager;
+import com.smartfoxserver.v2.annotations.Instantiation;
 import com.smartfoxserver.v2.api.CreateRoomSettings;
 import com.smartfoxserver.v2.core.SFSEventType;
+import com.smartfoxserver.v2.entities.Room;
 import com.smartfoxserver.v2.extensions.SFSExtension;
+import com.smartfoxserver.v2.game.CreateSFSGameSettings;
 
+@Instantiation(Instantiation.InstantiationMode.SINGLE_INSTANCE)
 public class RegisterExtension extends SFSExtension{
 	Logger logger = Logger.getLogger(RegisterExtension.class);
 	
@@ -23,6 +29,8 @@ public class RegisterExtension extends SFSExtension{
 	@Override
 	public void init() {
 		App.getInstance();
+		LobbyManager.getInstance().setLobbyListener(new LobbyListener(this));
+		
 		addRequestHandler(ROOM_CREATED, RoomCreatedHandler.class);
 
 		addEventHandler(SFSEventType.USER_JOIN_ZONE, JoinZoneEventHandler.class);
@@ -30,16 +38,23 @@ public class RegisterExtension extends SFSExtension{
 		addEventHandler(SFSEventType.USER_DISCONNECT, UserLogoutHandler.class);
 		addEventHandler(SFSEventType.ROOM_REMOVED, RoomRemovedHandler.class);
 		addEventHandler(SFSEventType.PUBLIC_MESSAGE, PublicMessageHandler.class);
+		//addEventHandler(SFSEventType.GAME_INVITATION_SUCCESS,InvitataionHandler.class);
 		
 		createRoom();
 	}
 
+	/*
+	 * create room dynamicly
+	 **/
 	private void createRoom(){
 		try {
 			RoomManager roomManager = RoomManager.getInstance();
-			List<CreateRoomSettings> roomSettings = roomManager.creatRoom();
+			List<CreateSFSGameSettings> roomSettings = roomManager.createStaticGameRoom();
 			for (int i = 0; i < roomSettings.size(); i++) {
-				getParentZone().createRoom(roomSettings.get(i));
+				//owner null ,owner the server
+				Room game = getGameApi().createGame(getParentZone(), roomSettings.get(i), null,false,false);
+				logger.info(" - - - is game public:"+game.isPublic());
+				game.setProperty(roomSettings, game);
 			}
 		} catch (Exception e) {
 			logger.error("create room error:",e);

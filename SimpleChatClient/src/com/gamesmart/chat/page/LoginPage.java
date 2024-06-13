@@ -30,6 +30,8 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.apache.log4j.PropertyConfigurator;
+
 import com.gamesmart.chat.core.SimpleChatClient;
 import com.gamesmart.chat.io.Request;
 import com.gamesmart.chat.util.SimpleChatUtil;
@@ -65,6 +67,10 @@ public class LoginPage extends JFrame {
     }
     
     public static void main(String[] args) {
+    	//init log sys
+    	System.setProperty("WORKDIR", "log");
+    	PropertyConfigurator.configure("config/log4j.properties");
+    	
     	getInstance();
     }
 
@@ -367,6 +373,7 @@ public class LoginPage extends JFrame {
     }
     
     private void connectSfs(long userName, String pass) {
+    	System.out.print("- - - -connect to sfs- - - -");
     	PlayerState playerState = SimpleChatUtil.createPlayerState(userName,pass);
     	SimpleChatClient client = SimpleChatClient.getInstance();
     	client.init(playerState);

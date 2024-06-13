@@ -1,5 +1,6 @@
 package com.gamesmart.simplechat.enghine.io;
 
+import com.gamesmart.simplechat.enghine.core.LobbyManager;
 import com.gamesmart.simplechat.enghine.util.ChatUtil;
 import com.gamesmart.simplechat.enghine.vo.PlayerVO;
 
@@ -9,11 +10,12 @@ public class Session {
 	public Reply login(Request request) {
 		Reply reply = new Reply();
 		//PlayerVO playerVO = DAOFactory.getPlayerDAO().findPlayerVO(request.getUserId());
-		PlayerVO playerVO = new PlayerVO(request.getUserId(),ChatUtil.getName());
+		PlayerVO playerVO = new PlayerVO(request.getUserId(),ChatUtil.getName(),ChatUtil.getLevel());
 		playerState.setPlayerVO(playerVO);
 		if(playerVO == null) {
 			reply.setError(Reply.Error.userNotExist);
 		}
+		LobbyManager.getInstance().doRequest(request,playerState);
 		reply.setSession(this);
 		return reply;
 	}
@@ -28,6 +30,7 @@ public class Session {
 
 	public Reply doRequest(Request request) {
 		Reply reply = new Reply();
+		LobbyManager.getInstance().doRequest(request,playerState);
 		reply.setSession(this);
 		return reply;
 	}

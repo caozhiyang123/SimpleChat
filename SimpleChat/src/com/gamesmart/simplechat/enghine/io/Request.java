@@ -2,9 +2,7 @@ package com.gamesmart.simplechat.enghine.io;
 
 import java.util.Map;
 
-public class Request {
-	public static final String ON_PUBLIC_MESSAGE = "on_public_message";
-	
+public class Request {	
 	private String cmd;
 	private Long userId;
 	private Map<String,Object> params;

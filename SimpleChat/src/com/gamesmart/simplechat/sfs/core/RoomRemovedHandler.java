@@ -16,13 +16,6 @@ public class RoomRemovedHandler extends BaseServerEventHandler {
 	
 	@Override
 	public void handleServerEvent(ISFSEvent event) throws SFSException {
-		User user = (User)event.getParameter(SFSEventParam.USER);
-		Long userId = Long.valueOf(user.getName());
-		
-		Request request = new Request();
-		request.setCmd(RequestVariable.LOGOUT);
-		request.setUserId(userId);
-		//App.getInstance().getSessionController().logout(request);
 		logger.debug(" = = room removed = = ");
 	}
 

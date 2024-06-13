@@ -24,6 +24,12 @@ public class PlayerVO {
 		this.userId = userId;
 		this.alias = alias;
 	}
+	
+	public PlayerVO(long userId, String alias,int level) {
+		this.userId = userId;
+		this.alias = alias;
+		this.level = level;
+	}
 	public long getUserId() {
 		return userId;
 	}
@@ -35,6 +41,9 @@ public class PlayerVO {
 	}
 	public void setBalance(long coins) {
 		this.coins = coins;
+	}
+	public long getBalance() {
+		return this.coins;
 	}
 	public void setFacebookID(long faceBookID) {
 		this.facebookID = faceBookID;
@@ -51,8 +60,14 @@ public class PlayerVO {
 	public void setLevel(int level) {
 		this.level = level;
 	}
+	public int getLevel() {
+		return level;
+	}
 	public void setXp(long xp) {
 		this.xp = xp;
+	}
+	public long getXp() {
+		return this.xp;
 	}
 	public void setXpToday(long xpToday) {
 		this.xpToday = xpToday;

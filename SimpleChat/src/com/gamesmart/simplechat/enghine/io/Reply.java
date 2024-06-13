@@ -7,7 +7,8 @@ public class Reply {
 	public enum Error{
 		none,
 		userNotExist,
-		userNotLogin
+		userNotLogin,
+		handlerNotExit
 	}
 	
 

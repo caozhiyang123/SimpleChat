@@ -1,0 +1,18 @@
+package com.gamesmart.simplechat.enghine.core;
+
+import com.gamesmart.simplechat.enghine.io.PlayerState;
+import com.gamesmart.simplechat.enghine.io.Reply;
+import com.gamesmart.simplechat.enghine.io.Request;
+
+public class OnPubcliMessageHandler extends RequestHandler {
+
+	public OnPubcliMessageHandler(LobbyManager lobby) {
+		super(lobby);
+	}
+
+	@Override
+	public Reply doRequest(Request request, PlayerState playerState) {
+		return new Reply();
+	}
+
+}
