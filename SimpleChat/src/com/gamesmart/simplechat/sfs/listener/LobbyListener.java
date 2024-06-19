@@ -84,6 +84,7 @@ public class LobbyListener implements IListener{
 			List<UserVariable> list = new ArrayList<UserVariable>();
 			list.add(new SFSUserVariable("invitation_room", game.getName(),false,true));
 			list.add(new SFSUserVariable("room_pass", game.getPassword(),false,true));
+			list.add(new SFSUserVariable("level_limit", 100L,false,true));
 			User user = parent.getParentZone().getUserByName(String.valueOf(playerState.getUserId()));
 			parent.getApi().setUserVariables(user,list,true,false);
 		}

@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import com.gamesmart.simplechat.enghine.core.App;
 import com.gamesmart.simplechat.enghine.core.LobbyManager;
 import com.gamesmart.simplechat.sfs.core.JoinZoneEventHandler;
+import com.gamesmart.simplechat.sfs.core.OnCustomLoginEventHandler;
 import com.gamesmart.simplechat.sfs.core.PublicMessageHandler;
 import com.gamesmart.simplechat.sfs.core.RoomCreatedHandler;
 import com.gamesmart.simplechat.sfs.core.RoomRemovedHandler;
@@ -33,6 +34,9 @@ public class RegisterExtension extends SFSExtension{
 		
 		addRequestHandler(ROOM_CREATED, RoomCreatedHandler.class);
 
+		//<isCustomLogin>true</isCustomLogin>
+        //The Zone must be configured with the customLogin attribute set to true.
+        addEventHandler(SFSEventType.USER_LOGIN, OnCustomLoginEventHandler.class);
 		addEventHandler(SFSEventType.USER_JOIN_ZONE, JoinZoneEventHandler.class);
 		addEventHandler(SFSEventType.USER_LOGOUT, UserLogoutHandler.class);
 		addEventHandler(SFSEventType.USER_DISCONNECT, UserLogoutHandler.class);
@@ -53,8 +57,6 @@ public class RegisterExtension extends SFSExtension{
 			for (int i = 0; i < roomSettings.size(); i++) {
 				//owner null ,owner the server
 				Room game = getGameApi().createGame(getParentZone(), roomSettings.get(i), null,false,false);
-				logger.info(" - - - is game public:"+game.isPublic());
-				game.setProperty(roomSettings, game);
 			}
 		} catch (Exception e) {
 			logger.error("create room error:",e);

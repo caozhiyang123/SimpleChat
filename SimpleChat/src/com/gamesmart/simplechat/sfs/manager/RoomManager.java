@@ -55,22 +55,22 @@ public class RoomManager {
 		gameSettings.setGroupId("chat");
 		gameSettings.setUseWordsFilter(true);
 		gameSettings.setMaxVariablesAllowed(30);
-		gameSettings.setMaxSpectators(30);
 		gameSettings.setAllowOwnerOnlyInvitation(true);
-		//gameSettings.setAutoRemoveMode(SFSRoomRemoveMode.NEVER_REMOVE);
-		gameSettings.setDynamic(false);
 		gameSettings.setExtension(new CreateRoomSettings.RoomExtensionSettings("SimpleChatExtension","com.gamesmart.simplechat.sfs.RegisterRoomExtension"));
+		gameSettings.setMaxUsers(100);
 		gameSettings.setGame(true);//flag set true,will allow spectator
+		gameSettings.setMaxSpectators(30);
 		gameSettings.setGamePublic(true);
 		//gameSettings.setPassword("123456");
 		gameSettings.setHidden(false);
 		gameSettings.setLeaveLastJoinedRoom(true);
-		gameSettings.setMaxUsers(100);
 		gameSettings.setMinPlayersToStartGame(2);
 		gameSettings.setNotifyGameStartedViaRoomVariable(true);
 		gameSettings.setPlayerMatchExpression(new MatchExpression("level", NumberMatch.GREATER_THAN_OR_EQUAL_TO, 1));
 		//Set the advanced settings of the Room. 
 		//These flags allow to configure which events the Room will broadcast and which operations are allowed in the Room itself.
+		gameSettings.setDynamic(false);
+		//gameSettings.setAutoRemoveMode(SFSRoomRemoveMode.NEVER_REMOVE);
 		gameSettings.setRoomSettings(EnumSet.of(SFSRoomSettings.PUBLIC_MESSAGES,SFSRoomSettings.USER_ENTER_EVENT));
 		//set room variables
 		List<RoomVariable> roomVariables=new ArrayList<>();

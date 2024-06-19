@@ -103,6 +103,7 @@ public class EventListener implements IEventListener {
 		}else if(changedVars.contains(EventVariable.INVITATION_ROOM)) {
 			String roomName = getUserVariable(EventVariable.INVITATION_ROOM).getStringValue();
 			String roomPass = getUserVariable(EventVariable.ROOM_PASS) == null?null:getUserVariable(EventVariable.ROOM_PASS).getStringValue();
+			Double levelLimit = getUserVariable("level_limit").getDoubleValue();
 			logger.info(String.format("- - - - invitation join room - - - ,room:%s,pass:%s",roomName,roomPass));
 			sfs.send(new JoinRoomRequest(roomName, roomPass));// as user
 		}
@@ -155,7 +156,10 @@ public class EventListener implements IEventListener {
 			if ((boolean) event.getArguments().get("success")) {
 				// join lobby zone
 				logger.debug("CONNECT SUFFESSFULLY");
-				sfs.send(new LoginRequest(String.valueOf(playerState.getPlayerVO().getUserId()), "", Request.CHAT_ZONE));
+				//sfs.send(new LoginRequest(String.valueOf(playerState.getPlayerVO().getUserId()), "", Request.CHAT_ZONE));
+				SFSObject params = new SFSObject();
+				params.putUtfString("name", "123");
+				sfs.send(new LoginRequest(String.valueOf(playerState.getPlayerVO().getUserId()), "", Request.CHAT_ZONE, params));
 			} else {
 				logger.debug("connection failed");
 			}
