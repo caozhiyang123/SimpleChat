@@ -4,7 +4,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="lib"/>
 	<classpathentry kind="lib" path="lib/sfs2x-client-core.jar"/>
-	<classpathentry kind="lib" path="lib/SFS2X_API_Java.jar" sourcepath="lib/sfs2x.jar"/>
+	<classpathentry kind="lib" path="lib/SFS2X_API_Java.jar" sourcepath="lib/SFS2X_API_Java.jar"/>
 	<classpathentry kind="lib" path="lib/netty-3.2.2.Final.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.15.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-1.5.10.jar"/>

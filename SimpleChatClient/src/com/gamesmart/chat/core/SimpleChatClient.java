@@ -1,9 +1,12 @@
 package com.gamesmart.chat.core;
 
+import java.util.List;
+
 import com.gamesmart.chat.page.HomePage;
 import com.gamesmart.chat.vo.PlayerState;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 
+import sfs2x.client.entities.Buddy;
 import sfs2x.client.requests.PublicMessageRequest;
 
 public class SimpleChatClient extends BaseClient{
@@ -41,5 +44,17 @@ public class SimpleChatClient extends BaseClient{
 
 	public void updateAlias(String alias) {
 		EventListener.getInstance().updateAlias(alias);
+	}
+
+	public void addBuddy(String buddyName) {
+		EventListener.getInstance().addBuddy(buddyName);
+	}
+
+	public void updateBuddyList(List<Buddy> buddyList) {
+		HomePage.getInstance().updateBuddyList(buddyList);
+	}
+
+	public void removeBuddy(String buddyName) {
+		EventListener.getInstance().removeBuddy(buddyName);;
 	}
 }

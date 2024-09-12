@@ -35,11 +35,14 @@ public class JoinZoneEventHandler extends BaseServerEventHandler{
 			if(reply.getError() == Reply.Error.none) {
 				PlayerVO playerVO = reply.getSession().getPlayerState().getPlayerVO();
 				List<UserVariable> userVariables = new ArrayList<UserVariable>();
+				//public variable
 				userVariables.add(new SFSUserVariable("user_alias_name", playerVO.getAlias(),false,false));
-				userVariables.add(new SFSUserVariable("user_level", playerVO.getLevel(),false,false));
 				userVariables.add(new SFSUserVariable("user_id",playerVO.getUserId(),false,false));
-				userVariables.add(new SFSUserVariable("user_info", playerVO.toString(),false,false));
 				userVariables.add(new SFSUserVariable("joined_room", false,false,false));
+				userVariables.add(new SFSUserVariable("name","Michael",false,false));
+				userVariables.add(new SFSUserVariable("pic","http://pic",false,false));
+				//private variable
+				userVariables.add(new SFSUserVariable("user_info", playerVO.toString(),false,true));
 				userVariables.add(new SFSUserVariable("coins", playerVO.getBalance(),false,true));
 				userVariables.add(new SFSUserVariable("xp", playerVO.getXp(),false,true));
 				userVariables.add(new SFSUserVariable("level", playerVO.getLevel(),false,true));

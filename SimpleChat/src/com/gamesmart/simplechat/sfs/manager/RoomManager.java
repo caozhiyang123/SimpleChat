@@ -58,8 +58,8 @@ public class RoomManager {
 		gameSettings.setAllowOwnerOnlyInvitation(true);
 		gameSettings.setExtension(new CreateRoomSettings.RoomExtensionSettings("SimpleChatExtension","com.gamesmart.simplechat.sfs.RegisterRoomExtension"));
 		gameSettings.setMaxUsers(100);
-		gameSettings.setGame(true);//flag set true,will allow spectator
-		gameSettings.setMaxSpectators(30);
+		gameSettings.setGame(false);//flag set true,will allow spectator
+//		gameSettings.setMaxSpectators(30);
 		gameSettings.setGamePublic(true);
 		//gameSettings.setPassword("123456");
 		gameSettings.setHidden(false);
@@ -70,8 +70,8 @@ public class RoomManager {
 		//Set the advanced settings of the Room. 
 		//These flags allow to configure which events the Room will broadcast and which operations are allowed in the Room itself.
 		gameSettings.setDynamic(false);
-		//gameSettings.setAutoRemoveMode(SFSRoomRemoveMode.NEVER_REMOVE);
-		gameSettings.setRoomSettings(EnumSet.of(SFSRoomSettings.PUBLIC_MESSAGES,SFSRoomSettings.USER_ENTER_EVENT));
+		gameSettings.setAutoRemoveMode(SFSRoomRemoveMode.NEVER_REMOVE);
+		//gameSettings.setRoomSettings(EnumSet.of(SFSRoomSettings.PUBLIC_MESSAGES,SFSRoomSettings.USER_ENTER_EVENT,SFSRoomSettings.USER_EXIT_EVENT));
 		//set room variables
 		List<RoomVariable> roomVariables=new ArrayList<>();
 		roomVariables.add(new SFSRoomVariable("star","1"));
@@ -110,7 +110,7 @@ public class RoomManager {
 		gameSettings.setPlayerMatchExpression(new MatchExpression("level", NumberMatch.GREATER_THAN_OR_EQUAL_TO, 1));
 		//Set the advanced settings of the Room. 
 		//These flags allow to configure which events the Room will broadcast and which operations are allowed in the Room itself.
-		gameSettings.setRoomSettings(EnumSet.of(SFSRoomSettings.PUBLIC_MESSAGES,SFSRoomSettings.USER_ENTER_EVENT));
+		//gameSettings.setRoomSettings(EnumSet.of(SFSRoomSettings.USER_ENTER_EVENT,SFSRoomSettings.USER_EXIT_EVENT));
 		//set room variables
 		List<RoomVariable> roomVariables=new ArrayList<>();
 		roomVariables.add(new SFSRoomVariable("star","1"));

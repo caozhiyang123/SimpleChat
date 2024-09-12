@@ -21,15 +21,26 @@ import com.smartfoxserver.v2.exceptions.SFSException;
 import sfs2x.client.SmartFox;
 import sfs2x.client.core.BaseEvent;
 import sfs2x.client.core.IEventListener;
+import sfs2x.client.core.SFSBuddyEvent;
 import sfs2x.client.core.SFSEvent;
+import sfs2x.client.entities.Buddy;
+import sfs2x.client.entities.Room;
+import sfs2x.client.entities.SFSBuddy;
 import sfs2x.client.entities.SFSRoom;
 import sfs2x.client.entities.SFSUser;
 import sfs2x.client.entities.User;
+import sfs2x.client.entities.variables.BuddyVariable;
+import sfs2x.client.entities.variables.SFSBuddyVariable;
 import sfs2x.client.entities.variables.SFSUserVariable;
 import sfs2x.client.entities.variables.UserVariable;
 import sfs2x.client.requests.JoinRoomRequest;
 import sfs2x.client.requests.LoginRequest;
 import sfs2x.client.requests.PublicMessageRequest;
+import sfs2x.client.requests.buddylist.AddBuddyRequest;
+import sfs2x.client.requests.buddylist.BuddyMessageRequest;
+import sfs2x.client.requests.buddylist.InitBuddyListRequest;
+import sfs2x.client.requests.buddylist.RemoveBuddyRequest;
+import sfs2x.client.requests.buddylist.SetBuddyVariablesRequest;
 
 public class EventListener implements IEventListener {
 	Logger logger = Logger.getLogger(EventListener.class);
@@ -61,6 +72,26 @@ public class EventListener implements IEventListener {
 	public void dispatch(BaseEvent event) throws SFSException {
 		getBaseEventResponse(event);
 
+		if (event.getType().equals(SFSBuddyEvent.BUDDY_VARIABLES_UPDATE)) {
+			Map<String, Object> arguments = event.getArguments();
+			Boolean isItMe = (Boolean) arguments.get("isItMe");
+			List<String> changedVars = (List) arguments.get("changedVars");
+			if (isItMe) {
+				System.out.println("I've updated the following Buddy Variables:");
+				for (String key : changedVars) {
+					System.out.println(key + "-->" + sfs.getBuddyManager().getMyVariable(key).getValue());
+				}
+			}else{
+                String buddyName = ((Buddy) arguments.get("buddy")).getName();
+                System.out.println("My buddy " + buddyName + " updated the following Buddy Variables:");
+                
+                for (String key : changedVars) {
+                    System.out.println(key + "-->" + sfs.getBuddyManager().getBuddyByName(buddyName).getVariable(key).getValue());
+                }
+            }
+			System.out.println(arguments);
+		}
+		
 		if (event.getType().equals(SFSEvent.ROOM_VARIABLES_UPDATE)) {
 
 		}
@@ -106,6 +137,11 @@ public class EventListener implements IEventListener {
 			Double levelLimit = getUserVariable("level_limit").getDoubleValue();
 			logger.info(String.format("- - - - invitation join room - - - ,room:%s,pass:%s",roomName,roomPass));
 			sfs.send(new JoinRoomRequest(roomName, roomPass));// as user
+		}else if(changedVars.contains("name")) {
+			String name = getUserVariable("name").getStringValue();
+			boolean joinedRoom = getUserVariable("joined_room").getBoolValue();
+			String pic = getUserVariable("pic").getStringValue();
+			logger.info(String.format("- - - - user joined room,variable updated,name:%s,joinedRoom:%s,pic:%s", name,joinedRoom,pic));
 		}
 	}
 
@@ -174,19 +210,50 @@ public class EventListener implements IEventListener {
 
 		if (event.getType().equals(SFSEvent.LOGIN)) {
 			sfsUser = (User) event.getArguments().get("user");
-
 			logger.debug("LOGIN SUCCESSFULLY");
-
-			// sfs.send(new JoinRoomRequest(Request.CHAT_ROOM));
+			//update buddy nick name of self
+			updateBuddyVariable("alias");
+			LoginPage.getInstance().loginSuccessed();
+			//sfs.send(new JoinRoomRequest(Request.CHAT_ROOM));
 		} else if (event.getType().equals(SFSEvent.LOGIN_ERROR)) {
 			logger.debug("LOGIN ERROR");
 		}
 
+		/**
+		 * This event <code>SFSEvent.USER_ENTER_ROOM</code> is global event,if serve open this feature,
+		 * then every player's join room event will be caught.
+		 */
+		if(event.getType().equals(SFSEvent.USER_ENTER_ROOM)) {
+			//{user=[User: 2, Id: 7, isMe: false], room=[Room: chatRoom_820213068276603, Id: 0, GroupId: chat]}
+			logger.info(String.format("- - - -USER ENTER ROOM,user id:%s - - - - ",""));
+            User enteredUser = (User) event.getArguments().get("user");
+            if(!enteredUser.isItMe()) {
+            	int userId = Integer.parseInt(enteredUser.getName());
+            	//int id = sfsUser.getId();
+            	//int playerId = sfsUser.getPlayerId();
+            	String name = enteredUser.getVariable("name").getStringValue();
+            	String pic = enteredUser.getVariable("pic").getStringValue();
+            	logger.info(String.format("player:%s,joined room,pic:%s,userId:%s",name,pic,userId));
+            }
+		}
+		
+		
+		if(event.getType().equals(SFSEvent.USER_EXIT_ROOM)) {
+			//{user=[User: 2, Id: 1, isMe: false], room=[Room: chatRoom_942924845989176, Id: 0, GroupId: chat]}
+			User exitedUser = (User) event.getArguments().get("user");
+			if(!exitedUser.isItMe()) {
+				int userId = Integer.parseInt(exitedUser.getName());
+				logger.info(String.format("- - - -USER EXIT ROOM,user id:%s - - - - ",userId));
+			}
+		}
+		
 		if (event.getType().equals(SFSEvent.ROOM_JOIN)) {
+			//Room room = (Room)event.getArguments().get("room");
 			//sfsUser.setVariable(new SFSUserVariable("joined_room", true));
-			
+			//User user = (User)event.getArguments().get("user");
 			// open publish message page
-			logger.debug("ROOM JOIN SUCCESSFULLY");
+			initBuddyList();
+			logger.debug(String.format("- - - - ROOM JOIN SUCCESSFULLY,self"));
 		} else if (event.getType().equals(SFSEvent.ROOM_JOIN_ERROR)) {
 			logger.debug("ROOM JOIN FAILED");
 			LoginPage.getInstance().loginFailed("账号或密码错误，也可能是网络错误，请重试");
@@ -197,12 +264,60 @@ public class EventListener implements IEventListener {
 			SFSRoom room = (SFSRoom) event.getArguments().get("room");
 			if(!user.isItMe()) {
 				String message = event.getArguments().get("message").toString();
+				logger.info(String.format("- - -msg send from:%s,msg:%s", user.getName(),message));
 			}
 		}
 
 		if (event.getType().equals(SFSEvent.LOGOUT) || event.getType().equals(SFSEvent.USER_EXIT_ROOM)) {
 			System.out.println("LOGOUT or USER_EXIT_ROOM");
 		}
+		//evens below is about buddy
+		if(event.getType().equals(SFSBuddyEvent.BUDDY_LIST_INIT)) {
+			Map<String, Object> arguments = event.getArguments();
+			//myVariables
+			//buddyList
+			List<SFSBuddy> buddyList = (List<SFSBuddy>)arguments.get("buddyList");
+			System.out.println(arguments);
+			updateBuddyList();
+		}
+		if(event.getType().equals(SFSBuddyEvent.BUDDY_ONLINE_STATE_UPDATE)) {
+			Map<String, Object> arguments = event.getArguments();
+			System.out.println(arguments);
+		}
+		if(event.getType().equals(SFSBuddyEvent.BUDDY_MESSAGE)) {
+			Map<String, Object> arguments = event.getArguments();
+			System.out.println(arguments);
+		}
+		if(event.getType().equals(SFSBuddyEvent.BUDDY_ADD)) {
+			Map<String, Object> arguments = event.getArguments();
+			SFSBuddy buddy = (SFSBuddy)arguments.get("buddy");
+			logger.info(String.format("buddy add successfully,buddy nick name:%s,buddy name:%s,buddy state:%s",
+					buddy.getNickName(),buddy.getName(),buddy.getState()));
+			updateBuddyList();
+		}
+		if(event.getType().equals(SFSBuddyEvent.BUDDY_REMOVE)) {
+			Map<String, Object> arguments = event.getArguments();
+			//{buddy=[Buddy: 111, id: 23]}
+			System.out.println(arguments);
+			updateBuddyList();
+		}
+		if(event.getType().equals(SFSBuddyEvent.BUDDY_BLOCK)) {
+			Map<String, Object> arguments = event.getArguments();
+			System.out.println(arguments);
+		}
+		if(event.getType().equals(SFSBuddyEvent.BUDDY_ERROR)) {
+			Map<String, Object> arguments = event.getArguments();
+			logger.info(String.format("buddy add failed,message:%s", arguments.get("errorMessage")));
+		}
+		
+	}
+
+	private void updateBuddyVariable(String key) {
+		// Set my Buddy Variables
+		List vars = new ArrayList();
+		// Create a persistent Buddy Variable containing my mood message
+	    vars.add(new SFSBuddyVariable(SFSBuddyVariable.OFFLINE_PREFIX + key,playerState.getPlayerVO().getAlias()));
+	    sfs.send(new SetBuddyVariablesRequest(vars));
 	}
 
 	public boolean sendMsg(String msg, long sendTo) {
@@ -248,5 +363,41 @@ public class EventListener implements IEventListener {
 	public void updateAlias(String alias) {
 		// TODO
 
+	}
+	
+	private void initBuddyList() {
+		sfs.send(new InitBuddyListRequest());
+	}
+	
+	/* *
+	 * open buddy list system in zone file
+	 *   <buddyList active="true">
+	 *   
+	 * BuddyList request error	BuddyList is not inited. Please send an InitBuddyRequest first.
+	 * Can't add buddy while off-line
+	 * */
+	public void addBuddy(String buddyName) {
+		sfs.send(new AddBuddyRequest(buddyName));
+	}
+
+	private void updateBuddyList() {
+		List<Buddy> buddyList = sfs.getBuddyManager().getBuddyList();
+		SimpleChatClient.getInstance().updateBuddyList(buddyList);
+	}
+
+	public void removeBuddy(String buddyName) {
+		sfs.send(new RemoveBuddyRequest(buddyName));
+	}
+	
+	public void sendBuddyMessage(String buddyName,String message) {
+		Buddy friend = null;
+		List<Buddy> buddyList = sfs.getBuddyManager().getBuddyList();
+		for (Buddy buddy : buddyList) {
+			if(buddy.getName().equals(buddyName)) {
+				friend = buddy;
+				break;
+			}
+		}
+		sfs.send(new BuddyMessageRequest(message, friend));
 	}
 }

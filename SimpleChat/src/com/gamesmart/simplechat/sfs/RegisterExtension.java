@@ -6,9 +6,14 @@ import org.apache.log4j.Logger;
 
 import com.gamesmart.simplechat.enghine.core.App;
 import com.gamesmart.simplechat.enghine.core.LobbyManager;
+import com.gamesmart.simplechat.sfs.core.AddBuddyHandler;
+import com.gamesmart.simplechat.sfs.core.BlockBuddyHandler;
+import com.gamesmart.simplechat.sfs.core.BuddyOnlineStateUpdateHandler;
+import com.gamesmart.simplechat.sfs.core.InitBuddyHandler;
 import com.gamesmart.simplechat.sfs.core.JoinZoneEventHandler;
 import com.gamesmart.simplechat.sfs.core.OnCustomLoginEventHandler;
 import com.gamesmart.simplechat.sfs.core.PublicMessageHandler;
+import com.gamesmart.simplechat.sfs.core.RemoveBuddyHandler;
 import com.gamesmart.simplechat.sfs.core.RoomCreatedHandler;
 import com.gamesmart.simplechat.sfs.core.RoomRemovedHandler;
 import com.gamesmart.simplechat.sfs.core.UserLogoutHandler;
@@ -43,6 +48,11 @@ public class RegisterExtension extends SFSExtension{
 		addEventHandler(SFSEventType.ROOM_REMOVED, RoomRemovedHandler.class);
 		addEventHandler(SFSEventType.PUBLIC_MESSAGE, PublicMessageHandler.class);
 		//addEventHandler(SFSEventType.GAME_INVITATION_SUCCESS,InvitataionHandler.class);
+		//addEventHandler(SFSEventType.BUDDY_LIST_INIT,InitBuddyHandler.class);
+		addEventHandler(SFSEventType.BUDDY_ONLINE_STATE_UPDATE,BuddyOnlineStateUpdateHandler.class);
+		addEventHandler(SFSEventType.BUDDY_ADD,AddBuddyHandler.class);
+		addEventHandler(SFSEventType.BUDDY_BLOCK,BlockBuddyHandler.class);
+		addEventHandler(SFSEventType.BUDDY_REMOVE,RemoveBuddyHandler.class);
 		
 		createRoom();
 	}

@@ -47,7 +47,10 @@ import org.apache.log4j.Logger;
 import com.gamesmart.chat.core.EventListener;
 import com.gamesmart.chat.core.SimpleChatClient;
 import com.gamesmart.chat.util.ToolTip;
+import com.gamesmart.chat.vo.BuddyVO;
 import com.gamesmart.chat.vo.UserVO;
+
+import sfs2x.client.entities.Buddy;
 
 public class HomePage extends JFrame{
 	private static Logger logger = Logger.getLogger(HomePage.class);
@@ -60,14 +63,17 @@ public class HomePage extends JFrame{
 	private static HomePage homePage = null;
 	private static JScrollPane subPanelb_a_1_scroll;
 	private static JPanel subPanela_b;//lobby users
+	private static JPanel subPanela_c;//buddy list
 	private static JScrollPane jScrollPane_a_b;
 	private static JButton selfButton;
 	private static JPanel subPanela_a;
 	private static JTextPane currentVisiblePane;
 	private static JButton currentActiveButton;
 	private static JButton lobbyGroupButton;
+	private static JScrollPane jScrollPane_a_c;
 	
 	private static Map<Long,JButton> joinedUsers = new HashMap<Long,JButton>();
+	private static Map<Long,BuddyVO> buddyList = new HashMap<Long,BuddyVO>();
 	private static Map<Long,JTextPane> userPanes = new HashMap<>();
 	private static Map<Long,JButton> groups = new HashMap<Long,JButton>();
 	private static Map<Long,JTextPane> groupPanes = new HashMap<>();
@@ -133,6 +139,7 @@ public class HomePage extends JFrame{
 		subPanela_a_1.setBackground(Color.YELLOW);
 		subPanela.add(subPanela_a_1);
 		
+		// - - - -  - - - -  - - - - Lobby  - - - -  - - - -  - - - -  - - - -  - - - -  - - - -  - - - - 
 		subPanela_a = new JPanel() {
 			@Override
             protected void paintComponent(Graphics g) {
@@ -163,9 +170,11 @@ public class HomePage extends JFrame{
 		jScrollPane_a_a.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		subPanela_a_1.add(jScrollPane_a_a);
 		
-		createLobbyGroupButton("lobby");
+		createLobbyGroupButton("Lobby");
 		//currentVisiblePane = lobbyChatArea;
+		// - - - -  - - - -  - - - - Lobby  - - - -  - - - -  - - - -  - - - -  - - - -  - - - -  - - - - 
 		
+		// - - - -  - - - -  - - - - Players  - - - -  - - - -  - - - -  - - - -  - - - -  - - - -  - - - - 
 		subPanela_b = new JPanel() {
 			@Override
             protected void paintComponent(Graphics g) {
@@ -181,13 +190,7 @@ public class HomePage extends JFrame{
                 g2d.fillRect(0, 0, w, h);
             }
 		};
-		subPanela_b.setBorder(BorderFactory.createTitledBorder("friends"));
-//		FlowLayout flowLayout = new FlowLayout(FlowLayout.LEFT);
-//		flowLayout.setHgap(0);
-//		flowLayout.setVgap(0);
-//		BoxLayout boxLayout = new BoxLayout(subPanela_b, BoxLayout.Y_AXIS);
-//		subPanela_b.setLayout(boxLayout);
-//		subPanela_b.setLayout(flowLayout);
+		subPanela_b.setBorder(BorderFactory.createTitledBorder("Players"));
 		subPanela_b.setLayout(new GridLayout(100,1));
 		
 		jScrollPane_a_b = new JScrollPane(subPanela_b);
@@ -200,14 +203,15 @@ public class HomePage extends JFrame{
 		});
 		jScrollPane_a_b.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		subPanela_a_1.add(jScrollPane_a_b);
-//		subPanela_a_1.add(subPanela_b);
+		// - - - -  - - - -  - - - - Players  - - - -  - - - -  - - - -  - - - -  - - - -  - - - -  - - - - 
 		
+		// - - - -  - - - -  - - - - Buddy List  - - - -  - - - -  - - - -  - - - -  - - - -  - - - -  - - 
 		JPanel subPanela_a_2 = new JPanel();
 		subPanela_a_2.setLayout(new GridLayout(1,3));
 		subPanela_a_2.setBackground(Color.YELLOW);
 		subPanela.add(subPanela_a_2);
 		
-		JPanel subPanela_c = new JPanel() {
+		subPanela_c = new JPanel() {
 			@Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -222,8 +226,20 @@ public class HomePage extends JFrame{
                 g2d.fillRect(0, 0, w, h);
             }
 		};
-		subPanela_c.setBorder(BorderFactory.createTitledBorder("default"));
-		subPanela_a_2.add(subPanela_c);
+		subPanela_c.setBorder(BorderFactory.createTitledBorder("Buddy list"));
+		subPanela_c.setLayout(new GridLayout(100,1));
+		
+		jScrollPane_a_c = new JScrollPane(subPanela_c);
+		jScrollPane_a_c.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		jScrollPane_a_c.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
+			@Override
+			protected void configureScrollBarColors() {
+				this.thumbColor = new Color(149,202,176);
+			}
+		});
+		jScrollPane_a_c.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		subPanela_a_2.add(jScrollPane_a_c);
+		// - - - -  - - - -  - - - - Buddy List  - - - -  - - - -  - - - -  - - - -  - - - -  - - - -  - - 
 	  
 		JPanel subPanela_d = new JPanel() {
 			@Override
@@ -478,7 +494,6 @@ public class HomePage extends JFrame{
 		if(userId == SimpleChatClient.getInstance().getPlayerState().getPlayerVO().getUserId()) {
 			selfButton = userButton; 
 		}
-		joinedUsers.put(userId,userButton);
 		userButton.setHorizontalAlignment(SwingConstants.LEFT);
 		userButton.setText(alias);
 		userButton.setPreferredSize(new Dimension(200,30));
@@ -498,8 +513,9 @@ public class HomePage extends JFrame{
 			public void mousePressed(MouseEvent e) {
 				if(e.getClickCount() == 2 && userId == SimpleChatClient.getInstance().getPlayerState().getPlayerVO().getUserId()) {
 					UserInfoSettingPage.getInstance(selfButton.getText(),userId);
-				}
-				if(e.getClickCount() == 1) {
+				}else if(e.getClickCount() == 2){
+					new BuddyInfoPage(alias,userId,"online",isBuddy(selfButton.getText(),userId));
+				}else if(e.getClickCount() == 1) {
 					userButton.setBackground(Color.GREEN);
 					for (Map.Entry<Long, JButton> map: joinedUsers.entrySet()) {
 						if((long)map.getKey() != userId) {
@@ -541,11 +557,69 @@ public class HomePage extends JFrame{
 			}
 			
 		});
+		
+		joinedUsers.put(userId,userButton);
 		subPanela_b.add(userButton);
 		subPanela_b.updateUI();
 		jScrollPane_a_b.updateUI();
 	}
 	
+	private boolean isBuddy(String buddyName, long userId) {
+		for (BuddyVO buddyVO : buddyList.values()) {
+			if(buddyVO.equals(buddyName) && buddyVO.getBuddyId() == userId) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void createBuddy(String buddyName,long playerId, boolean isTemp) {
+		JButton userButton = new JButton();
+		userButton.setHorizontalAlignment(SwingConstants.LEFT);
+		userButton.setText(buddyName);
+		userButton.setPreferredSize(new Dimension(200,30));
+		userButton.setBorder(BorderFactory.createLoweredBevelBorder());
+		userButton.setFont(new Font(null, Font.CENTER_BASELINE, 15));
+		userButton.setBackground(Color.GRAY);
+		userButton.setForeground(Color.WHITE);
+		userButton.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				if(e.getClickCount() == 2 && playerId != SimpleChatClient.getInstance().getPlayerState().getPlayerVO().getUserId()) {
+					new BuddyInfoPage(buddyName,playerId,"online",!isTemp);
+				}
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		buddyList.put(playerId,new BuddyVO(buddyName,playerId,"online",false,userButton));
+		subPanela_c.add(userButton);
+		subPanela_c.updateUI();
+		jScrollPane_a_c.updateUI();
+	}
 	
 	
 	protected void createAndActiveUserPane(long userId, JButton userButton) {
@@ -682,6 +756,10 @@ public class HomePage extends JFrame{
 	public void createUserButton(String alias,long userId) {
 		createUser(alias,userId);
 	}
+	
+	public void createBuddyButton(String buddyName,long userId, boolean isTemp) {
+		createBuddy(buddyName,userId,isTemp);
+	}
 
 	public void updateUserAlias(String alias, long userId) {
 		selfButton.setText(alias);
@@ -735,5 +813,31 @@ public class HomePage extends JFrame{
 		}
 		subPanela_b.updateUI();
 		jScrollPane_a_b.updateUI();
+	}
+
+	public void addBuddy(String buddyName) {
+		SimpleChatClient.getInstance().addBuddy(buddyName);
+	}
+	
+	public void removeBuddy(String buddyName) {
+		SimpleChatClient.getInstance().removeBuddy(buddyName);
+	}
+	
+	public void blockBuddy(String buddyName) {
+		
+	}
+	
+	public void updateBuddyList(List<Buddy> buddyList) {
+		//clear buddy list
+		this.buddyList.clear();
+		subPanela_c.removeAll();;
+		subPanela_c.updateUI();
+		jScrollPane_a_c.updateUI();
+		//update buddy list
+		for (Buddy buddy : buddyList) {
+			createBuddyButton(buddy.getName(),Long.parseLong(buddy.getName()),buddy.isTemp());
+			System.out.print(String.format("name:%s,nick name:%s,state:%s,online:%s,temp:%s,blocked:%s,alias:%s",
+					buddy.getName(),buddy.getNickName(),buddy.getState(),buddy.isOnline(),buddy.isTemp(),buddy.isBlocked(),buddy.getVariable("alias")));
+		}
 	}
 }

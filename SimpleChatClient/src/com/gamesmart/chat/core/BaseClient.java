@@ -3,6 +3,7 @@ package com.gamesmart.chat.core;
 import com.gamesmart.chat.vo.PlayerState;
 
 import sfs2x.client.SmartFox;
+import sfs2x.client.core.SFSBuddyEvent;
 import sfs2x.client.core.SFSEvent;
 
 abstract class BaseClient {
@@ -34,6 +35,16 @@ abstract class BaseClient {
 		sfs.addEventListener(SFSEvent.CONNECTION_RETRY, listener);
 		sfs.addEventListener(SFSEvent.CONNECTION_RESUME, listener);
 		sfs.addEventListener(SFSEvent.PUBLIC_MESSAGE, listener);
+		
+		// Add buddy-related event listeners during the SmartFox instance setup
+		sfs.addEventListener(SFSBuddyEvent.BUDDY_LIST_INIT, listener);
+		sfs.addEventListener(SFSBuddyEvent.BUDDY_ONLINE_STATE_UPDATE, listener);
+		sfs.addEventListener(SFSBuddyEvent.BUDDY_MESSAGE, listener);
+		sfs.addEventListener(SFSBuddyEvent.BUDDY_VARIABLES_UPDATE, listener);
+		sfs.addEventListener(SFSBuddyEvent.BUDDY_ADD, listener);
+		sfs.addEventListener(SFSBuddyEvent.BUDDY_REMOVE, listener);
+		sfs.addEventListener(SFSBuddyEvent.BUDDY_BLOCK, listener);
+		sfs.addEventListener(SFSBuddyEvent.BUDDY_ERROR, listener);
 		
 		sfs.setDebug(true);
 		sfs.connect(ip, port);
