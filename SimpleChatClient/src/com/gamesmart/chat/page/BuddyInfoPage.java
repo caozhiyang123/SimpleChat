@@ -20,7 +20,7 @@ import javax.swing.JRootPane;
 import javax.swing.JTextField;
 
 public class BuddyInfoPage extends JFrame {
-	public BuddyInfoPage(String buddyName, long userId,String state,boolean isBuddy){
+	public BuddyInfoPage(String buddyName, long userId, boolean isOnline,boolean isBuddy){
 		this.setUndecorated(true);
         this.setResizable(false);
         this.getRootPane().setWindowDecorationStyle(JRootPane.WARNING_DIALOG);
@@ -29,7 +29,7 @@ public class BuddyInfoPage extends JFrame {
 		this.setPreferredSize(new Dimension(300, 200));
 		this.setSize(new Dimension(400, 400));
 		this.setLocationRelativeTo(null);
-		this.getContentPane().add(createPanel(buddyName,userId,state,isBuddy));
+		this.getContentPane().add(createPanel(buddyName,userId,isOnline,isBuddy));
 		this.pack();
 		this.setVisible(true);
 		
@@ -43,7 +43,7 @@ public class BuddyInfoPage extends JFrame {
         });
 	}
 	
-	private Component createPanel(String buddyName, long userId,String state,boolean isBuddy) {
+	private Component createPanel(String buddyName, long userId, boolean isOnline,boolean isBuddy) {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(6,2));
 		
@@ -73,7 +73,7 @@ public class BuddyInfoPage extends JFrame {
 		stateLabel.setFont(new Font(null, Font.CENTER_BASELINE, 20));
 		secondPanel.add(stateLabel,BorderLayout.WEST);
 		
-		JTextField stateText = new JTextField("online");
+		JTextField stateText = new JTextField(isOnline?"online":"offline");
 		stateText.setFont(new Font(null, Font.CENTER_BASELINE, 18));
 		stateText.setEnabled(false);
 		secondPanel.add(stateText,BorderLayout.CENTER);
@@ -145,6 +145,24 @@ public class BuddyInfoPage extends JFrame {
 		});
 		sixthPanel.add(blockBuddy,BorderLayout.CENTER);
 		//- - - -  - - - - -  - 6 - - - -  -- - - -  -
+		
+		//- - - -  - - - - -  - 7 - - - -  -- - - -  -
+		JPanel seventhPanel = new JPanel();
+		seventhPanel.setLayout(new BorderLayout());
+		panel.add(seventhPanel);
+		JButton sendMsg = new JButton("Send Message");
+		sendMsg.setEnabled(true);
+		sendMsg.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//open chat panel
+				
+				setVisible(false);
+			}
+		});
+		seventhPanel.add(sendMsg,BorderLayout.CENTER);
+		//- - - -  - - - - -  - 7 - - - -  -- - - -  -
+		
 		
 		return panel;
 	}

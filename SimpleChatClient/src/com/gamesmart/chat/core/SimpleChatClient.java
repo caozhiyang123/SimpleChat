@@ -41,6 +41,10 @@ public class SimpleChatClient extends BaseClient{
 	public void appendMsg(String msg, String alias, long sendFrom,long sendTo) {
 		HomePage.getInstance().appendMsg(msg,alias,sendFrom,sendTo);
 	}
+	
+	public void appendBuddyMsg(String msg, String alias, long sendFrom,long sendTo) {
+		HomePage.getInstance().appendBuddyMsg(msg,alias,sendFrom,sendTo);
+	}
 
 	public void updateAlias(String alias) {
 		EventListener.getInstance().updateAlias(alias);
@@ -56,5 +60,9 @@ public class SimpleChatClient extends BaseClient{
 
 	public void removeBuddy(String buddyName) {
 		EventListener.getInstance().removeBuddy(buddyName);;
+	}
+	
+	public void sendBuddyMessage(String buddyName, String message) {
+		EventListener.getInstance().sendBuddyMessage(buddyName,message);
 	}
 }

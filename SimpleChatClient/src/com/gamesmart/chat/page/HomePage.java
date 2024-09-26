@@ -51,6 +51,7 @@ import com.gamesmart.chat.vo.BuddyVO;
 import com.gamesmart.chat.vo.UserVO;
 
 import sfs2x.client.entities.Buddy;
+import sfs2x.client.entities.variables.BuddyVariable;
 
 public class HomePage extends JFrame{
 	private static Logger logger = Logger.getLogger(HomePage.class);
@@ -73,8 +74,10 @@ public class HomePage extends JFrame{
 	private static JScrollPane jScrollPane_a_c;
 	
 	private static Map<Long,JButton> joinedUsers = new HashMap<Long,JButton>();
+	private static Map<Long,JButton> buddies = new HashMap<Long,JButton>();
 	private static Map<Long,BuddyVO> buddyList = new HashMap<Long,BuddyVO>();
 	private static Map<Long,JTextPane> userPanes = new HashMap<>();
+	private static Map<Long,JTextPane> buddyPanes = new HashMap<>();
 	private static Map<Long,JButton> groups = new HashMap<Long,JButton>();
 	private static Map<Long,JTextPane> groupPanes = new HashMap<>();
 	
@@ -125,7 +128,7 @@ public class HomePage extends JFrame{
         });
 	}
 
-	private static Component createChatPanel() {
+	private Component createChatPanel() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(1,2));
 		
@@ -449,11 +452,14 @@ public class HomePage extends JFrame{
 					for (JButton userButton: joinedUsers.values()) {
 						userButton.setBackground(Color.GRAY);
 					}
+					for(JButton buddyButton:buddies.values()) {
+						buddyButton.setBackground(Color.GRAY);
+					}
 					
 					lobbyGroupButton.setBackground(Color.GREEN);
 					for (Map.Entry<Long, JTextPane> map: userPanes.entrySet()) {
 						map.getValue().setVisible(false);
-						map.getValue().remove(map.getValue());
+						//map.getValue().remove(map.getValue());
 					}
 					subPanelb_a_1_scroll.updateUI();
 
@@ -514,7 +520,7 @@ public class HomePage extends JFrame{
 				if(e.getClickCount() == 2 && userId == SimpleChatClient.getInstance().getPlayerState().getPlayerVO().getUserId()) {
 					UserInfoSettingPage.getInstance(selfButton.getText(),userId);
 				}else if(e.getClickCount() == 2){
-					new BuddyInfoPage(alias,userId,"online",isBuddy(selfButton.getText(),userId));
+					new BuddyInfoPage(alias,userId,true,isBuddy(selfButton.getText(),userId));
 				}else if(e.getClickCount() == 1) {
 					userButton.setBackground(Color.GREEN);
 					for (Map.Entry<Long, JButton> map: joinedUsers.entrySet()) {
@@ -526,6 +532,9 @@ public class HomePage extends JFrame{
 					//reset group button background
 					for (JButton group: groups.values()) {
 						group.setBackground(Color.GRAY);
+					}
+					for(JButton buddyButton:buddies.values()) {
+						buddyButton.setBackground(Color.GRAY);
 					}
 					
 					lobbyChatArea.setVisible(false);
@@ -573,26 +582,33 @@ public class HomePage extends JFrame{
 		return false;
 	}
 
-	private void createBuddy(String buddyName,long playerId, boolean isTemp) {
-		JButton userButton = new JButton();
-		userButton.setHorizontalAlignment(SwingConstants.LEFT);
-		userButton.setText(buddyName);
-		userButton.setPreferredSize(new Dimension(200,30));
-		userButton.setBorder(BorderFactory.createLoweredBevelBorder());
-		userButton.setFont(new Font(null, Font.CENTER_BASELINE, 15));
-		userButton.setBackground(Color.GRAY);
-		userButton.setForeground(Color.WHITE);
-		userButton.addMouseListener(new MouseListener() {
+	private void createBuddy(String buddyName,long playerId, boolean isTemp, boolean isOnline) {
+		JButton buddyButton = new JButton();
+		buddyButton.setHorizontalAlignment(SwingConstants.LEFT);
+		buddyButton.setText(buddyName);
+		buddyButton.setPreferredSize(new Dimension(200,30));
+		buddyButton.setBorder(BorderFactory.createLoweredBevelBorder());
+		buddyButton.setFont(new Font(null, Font.CENTER_BASELINE, 15));
+		buddyButton.setBackground(Color.GRAY);
+		buddyButton.setForeground(Color.WHITE);
+		buddyButton.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
+				//reset group button background
+				for (JButton group: groups.values()) {
+					group.setBackground(Color.GRAY);
+				}
+				for (JButton user : joinedUsers.values()) {
+					user.setBackground(Color.GRAY);
+				}
+				buddyButton.setBackground(Color.GREEN);
+				createAndActiveBuddyPane(playerId, buddyButton);
 			}
 
 			@Override
 			public void mousePressed(MouseEvent e) {
 				if(e.getClickCount() == 2 && playerId != SimpleChatClient.getInstance().getPlayerState().getPlayerVO().getUserId()) {
-					new BuddyInfoPage(buddyName,playerId,"online",!isTemp);
+					new BuddyInfoPage(buddyName,playerId,isOnline,!isTemp);
 				}
 			}
 
@@ -615,8 +631,9 @@ public class HomePage extends JFrame{
 			}
 		});
 		
-		buddyList.put(playerId,new BuddyVO(buddyName,playerId,"online",false,userButton));
-		subPanela_c.add(userButton);
+		buddies.put(playerId, buddyButton);
+		buddyList.put(playerId,new BuddyVO(buddyName,playerId,isOnline,true,buddyButton));
+		subPanela_c.add(buddyButton);
 		subPanela_c.updateUI();
 		jScrollPane_a_c.updateUI();
 	}
@@ -627,12 +644,24 @@ public class HomePage extends JFrame{
 		if(userPane == null) {
 			userPane = new JTextPane();
 			userPanes.put(userId, userPane);
-			subPanelb_a_1_scroll.setViewportView(userPane);
 		}
 		subPanelb_a_1_scroll.setViewportView(userPane);
 		userPane.setVisible(true);
 		currentVisiblePane = userPane;
 		currentActiveButton = userButton;
+		subPanelb_a_1_scroll.updateUI();
+	}
+	
+	protected void createAndActiveBuddyPane(long userId, JButton buddyButton) {
+		JTextPane buddyPane = buddyPanes.get(userId);
+		if(buddyPane == null) {
+			buddyPane = new JTextPane();
+			buddyPanes.put(userId, buddyPane);
+		}
+		subPanelb_a_1_scroll.setViewportView(buddyPane);
+		buddyPane.setVisible(true);
+		currentVisiblePane = buddyPane;
+		currentActiveButton = buddyButton;
 		subPanelb_a_1_scroll.updateUI();
 	}
 
@@ -676,7 +705,7 @@ public class HomePage extends JFrame{
 		return right;
 	}
 	
-	private static boolean sendMsg(String msg) {
+	private boolean sendMsg(String msg) {
 		long sendTo = defaultLobbyGroupId;//default is send to lobby
 		for (Map.Entry<Long, JButton> map: joinedUsers.entrySet()) {
 			if(currentActiveButton == map.getValue() && (long)map.getKey() == SimpleChatClient.getInstance().getPlayerState().getPlayerVO().getUserId()){
@@ -686,8 +715,17 @@ public class HomePage extends JFrame{
 				break;
 			}
 		}
-		SimpleChatClient client = SimpleChatClient.getInstance();
-		return client.sendMsg(msg,sendTo);
+		if(isBuddyMsg()) {
+			if(isBuddyOnline()) {
+				sendBuddyMessage(null,msg);
+			}else {
+				//buddy is offline
+				sendTips(" is offline","buddy");
+			}
+			return true;
+		}else {
+			return SimpleChatClient.getInstance().sendMsg(msg,sendTo);
+		}
 	}
 	
 	public static void resetTextArea(String msg,String alias) {
@@ -744,6 +782,16 @@ public class HomePage extends JFrame{
 		
 	}
 	
+	public void appendBuddyMsg(String msg, String alias, long sendFrom,long sendTo) {
+		sendTips(msg,alias);
+		for (Map.Entry<Long, JTextPane> map: buddyPanes.entrySet()) {
+			if(map.getKey() == sendFrom) {
+				resetTextArea(msg,alias,map.getValue());
+				break;
+			}
+		}
+	}
+	
 	private void sendTips(String msg, String alias) {
 		ToolTip tip = ToolTip.getInstance();
 		StringBuilder sb = new StringBuilder(alias);
@@ -757,8 +805,8 @@ public class HomePage extends JFrame{
 		createUser(alias,userId);
 	}
 	
-	public void createBuddyButton(String buddyName,long userId, boolean isTemp) {
-		createBuddy(buddyName,userId,isTemp);
+	public void createBuddyButton(String buddyName,long userId, boolean isTemp, boolean isOnline) {
+		createBuddy(buddyName,userId,isTemp,isOnline);
 	}
 
 	public void updateUserAlias(String alias, long userId) {
@@ -835,9 +883,41 @@ public class HomePage extends JFrame{
 		jScrollPane_a_c.updateUI();
 		//update buddy list
 		for (Buddy buddy : buddyList) {
-			createBuddyButton(buddy.getName(),Long.parseLong(buddy.getName()),buddy.isTemp());
+			String name = String.format("Guest%s", buddy.getName());
+			if(buddy.getVariable("alias") != null) {
+				name = buddy.getVariable("alias").getStringValue();
+			}
+			createBuddyButton(name,Long.parseLong(buddy.getName()),buddy.isTemp(),buddy.isOnline());
 			System.out.print(String.format("name:%s,nick name:%s,state:%s,online:%s,temp:%s,blocked:%s,alias:%s",
 					buddy.getName(),buddy.getNickName(),buddy.getState(),buddy.isOnline(),buddy.isTemp(),buddy.isBlocked(),buddy.getVariable("alias")));
 		}
+	}
+	
+	private static void sendBuddyMessage(String buddyName, String message) {
+		for (Map.Entry<Long, JButton> map:buddies.entrySet()) {
+			if(currentActiveButton == map.getValue()) {
+				buddyName = String.valueOf(map.getKey());
+			}
+		}
+		SimpleChatClient.getInstance().sendBuddyMessage(buddyName, message);
+	}
+	
+	private static boolean isBuddyMsg() {
+		for (JButton buddyButton:buddies.values()) {
+			if(currentActiveButton == buddyButton) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private static boolean isBuddyOnline() {
+		String alias = currentActiveButton.getText();
+		for (Map.Entry<Long,BuddyVO> map:buddyList.entrySet()) {
+			if(map.getValue().getBuddyName().equals(alias)) {
+				return map.getValue().isOnline();
+			}
+		}
+		return false;
 	}
 }

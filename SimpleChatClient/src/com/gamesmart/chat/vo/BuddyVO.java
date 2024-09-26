@@ -5,15 +5,15 @@ import javax.swing.JButton;
 public class BuddyVO {
 	private String buddyName;
 	private long buddyId;
-	private String state;
+	private boolean isOnline;
 	private boolean isBuddy;//false means it is temp
 	private JButton button;
 	
-	public BuddyVO(String buddyName, long buddyId, String state, boolean isBuddy,JButton button) {
+	public BuddyVO(String buddyName, long buddyId, boolean isOnline, boolean isBuddy,JButton button) {
 		super();
 		this.buddyName = buddyName;
 		this.buddyId = buddyId;
-		this.state = state;
+		this.isOnline = isOnline;
 		this.isBuddy = isBuddy;
 		this.button = button;
 	}
@@ -29,11 +29,8 @@ public class BuddyVO {
 	public void setBuddyId(long buddyId) {
 		this.buddyId = buddyId;
 	}
-	public String getState() {
-		return state;
-	}
-	public void setState(String state) {
-		this.state = state;
+	public boolean isOnline() {
+		return isOnline;
 	}
 	public boolean isBuddy() {
 		return isBuddy;

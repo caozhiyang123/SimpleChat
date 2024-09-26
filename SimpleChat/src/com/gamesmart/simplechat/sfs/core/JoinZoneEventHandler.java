@@ -10,10 +10,11 @@ import com.gamesmart.simplechat.enghine.io.Reply;
 import com.gamesmart.simplechat.enghine.io.Request;
 import com.gamesmart.simplechat.enghine.io.RequestVariable;
 import com.gamesmart.simplechat.enghine.vo.PlayerVO;
+import com.smartfoxserver.v2.buddylist.BuddyVariable;
+import com.smartfoxserver.v2.buddylist.SFSBuddyVariable;
 import com.smartfoxserver.v2.core.ISFSEvent;
 import com.smartfoxserver.v2.core.SFSEventParam;
 import com.smartfoxserver.v2.entities.User;
-import com.smartfoxserver.v2.entities.data.SFSObject;
 import com.smartfoxserver.v2.entities.variables.SFSUserVariable;
 import com.smartfoxserver.v2.entities.variables.UserVariable;
 import com.smartfoxserver.v2.exceptions.SFSException;
@@ -47,6 +48,16 @@ public class JoinZoneEventHandler extends BaseServerEventHandler{
 				userVariables.add(new SFSUserVariable("xp", playerVO.getXp(),false,true));
 				userVariables.add(new SFSUserVariable("level", playerVO.getLevel(),false,true));
 				getApi().setUserVariables(user, userVariables,true,true);
+				/**
+				 * init buddy list
+				 * @param user current user
+				 * @param boolean fire server event BUDDY_LIST_INIT or not
+				 * */
+				getParentExtension().getBuddyApi().initBuddyList(user, false);
+				//update buddy variable
+				List<BuddyVariable> vars = new ArrayList<BuddyVariable>();
+				vars.add(new SFSBuddyVariable("$alias", playerVO.getAlias()));
+				getParentExtension().getBuddyApi().setBuddyVariables(user,vars,true,true);
 			}
 		} catch (Exception e) {
 			logger.error("",e);
