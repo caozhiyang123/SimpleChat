@@ -46,6 +46,11 @@ abstract class BaseClient {
 		sfs.addEventListener(SFSBuddyEvent.BUDDY_BLOCK, listener);
 		sfs.addEventListener(SFSBuddyEvent.BUDDY_ERROR, listener);
 		
+		// game type room invitation api
+		sfs.addEventListener(SFSEvent.INVITATION, listener);
+		sfs.addEventListener(SFSEvent.INVITATION_REPLY, listener);
+		sfs.addEventListener(SFSEvent.INVITATION_REPLY_ERROR, listener);
+		
 		sfs.setDebug(true);
 		sfs.connect(ip, port);
 	}

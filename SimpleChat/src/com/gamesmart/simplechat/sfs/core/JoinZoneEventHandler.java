@@ -15,6 +15,7 @@ import com.smartfoxserver.v2.buddylist.SFSBuddyVariable;
 import com.smartfoxserver.v2.core.ISFSEvent;
 import com.smartfoxserver.v2.core.SFSEventParam;
 import com.smartfoxserver.v2.entities.User;
+import com.smartfoxserver.v2.entities.data.SFSObject;
 import com.smartfoxserver.v2.entities.variables.SFSUserVariable;
 import com.smartfoxserver.v2.entities.variables.UserVariable;
 import com.smartfoxserver.v2.exceptions.SFSException;
@@ -47,6 +48,9 @@ public class JoinZoneEventHandler extends BaseServerEventHandler{
 				userVariables.add(new SFSUserVariable("coins", playerVO.getBalance(),false,true));
 				userVariables.add(new SFSUserVariable("xp", playerVO.getXp(),false,true));
 				userVariables.add(new SFSUserVariable("level", playerVO.getLevel(),false,true));
+//				SFSObject playerObject = new SFSObject();
+//				playerObject.putClass("PlayerVO", new com.gamesmart.simplechat.sfs.vo.PlayerVO(playerVO.getUserId(), playerVO.getAlias(), playerVO.getLevel()));
+//				userVariables.add(new SFSUserVariable("player", playerObject,false,true));
 				getApi().setUserVariables(user, userVariables,true,true);
 				/**
 				 * init buddy list

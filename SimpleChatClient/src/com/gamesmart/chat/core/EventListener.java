@@ -14,6 +14,7 @@ import com.gamesmart.chat.io.Request;
 import com.gamesmart.chat.page.HomePage;
 import com.gamesmart.chat.page.LoginPage;
 import com.gamesmart.chat.vo.PlayerState;
+import com.gamesmart.chat.vo.PlayerVO;
 import com.gamesmart.chat.vo.UserVO;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSObject;
@@ -160,24 +161,32 @@ public class EventListener implements IEventListener {
 			long sendFrom = (long) (double) getUserVariable(EventVariable.USER_ID).getDoubleValue();
 			String userInfo = getUserVariable(EventVariable.USER_INFO).getStringValue();
 			playerState.getPlayerVO().setAlias(aliasName);
-			playerState.getPlayerVO().setInfo(userInfo);
+			playerState.getPlayerVO().setUserInfo(userInfo);
 
 			HomePage.getInstance().appendMsg(userInfo, aliasName, sendFrom, 0);
 			HomePage.getInstance().createUserButton(
 					SimpleChatClient.getInstance().getPlayerState().getPlayerVO().getAlias(), sendFrom);
-		} else if (changedVars.contains(EventVariable.INVITATION_ROOM)) {
+		}
+		
+		if (changedVars.contains(EventVariable.INVITATION_ROOM)) {
 			String roomName = getUserVariable(EventVariable.INVITATION_ROOM).getStringValue();
 			String roomPass = getUserVariable(EventVariable.ROOM_PASS) == null ? null
 					: getUserVariable(EventVariable.ROOM_PASS).getStringValue();
 			Double levelLimit = getUserVariable("level_limit").getDoubleValue();
 			logger.info(String.format("- - - - invitation join room - - - ,room:%s,pass:%s", roomName, roomPass));
 			sfs.send(new JoinRoomRequest(roomName, roomPass));// as user
-		} else if (changedVars.contains("name")) {
+		}
+		
+		if (changedVars.contains("name")) {
 			String name = getUserVariable("name").getStringValue();
 			boolean joinedRoom = getUserVariable("joined_room").getBoolValue();
 			String pic = getUserVariable("pic").getStringValue();
 			logger.info(String.format("- - - - user joined room,variable updated,name:%s,joinedRoom:%s,pic:%s", name,
 					joinedRoom, pic));
+		}
+		
+		if (changedVars.contains("player")) {
+			PlayerVO playerVO = (PlayerVO)getUserVariable("player").getSFSObjectValue().getClass("PlayerVO");
 		}
 	}
 
@@ -363,6 +372,7 @@ public class EventListener implements IEventListener {
 		try {
 			if (sfs.isConnected()) {
 				SFSObject sfsObject = new SFSObject();
+//				sfsObject.putClass("player", new PlayerVO());
 				sfsObject.putLong("send_to", sendTo);
 				sfs.send(new PublicMessageRequest(msg, sfsObject, null));
 				res = true;

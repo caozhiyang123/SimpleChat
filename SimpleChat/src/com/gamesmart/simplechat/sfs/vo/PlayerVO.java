@@ -1,4 +1,4 @@
-package com.gamesmart.chat.vo;
+package com.gamesmart.simplechat.sfs.vo;
 
 import com.smartfoxserver.v2.protocol.serialization.SerializableSFSType;
 
@@ -64,6 +64,11 @@ public class PlayerVO implements SerializableSFSType{
 	public void setCoins(long coins) {
 		this.coins = coins;
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "PlayerVO [userId=" + userId + ", pass=" + pass + ", alias=" + alias + ", userInfo=" + userInfo
+				+ ", coins=" + coins + "]";
+	}
+
 }

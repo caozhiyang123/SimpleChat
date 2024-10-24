@@ -23,6 +23,14 @@ public class PublicMessageHandler extends BaseServerEventHandler {
 	@Override
 	public void handleServerEvent(ISFSEvent event) throws SFSException {
 		try {
+			//test object serializable
+			/*
+			 * SFSObject object = (SFSObject)event.getParameter(SFSEventParam.OBJECT);
+			 * com.gamesmart.simplechat.sfs.vo.PlayerVO playerVO =
+			 * (com.gamesmart.simplechat.sfs.vo.PlayerVO)(object.getClass("player"));
+			 * logger.info(String.format("player object:", playerVO.toString()));
+			 */
+			
 			User user = (User)event.getParameter(SFSEventParam.USER);
 			Long userId = Long.valueOf(user.getName());
 			Request request = new Request();
