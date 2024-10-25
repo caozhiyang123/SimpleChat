@@ -76,6 +76,7 @@ public class HomePage extends JFrame{
 	private static Map<Long,JButton> joinedUsers = new HashMap<Long,JButton>();
 	private static Map<Long,JButton> buddies = new HashMap<Long,JButton>();
 	private static Map<Long,BuddyVO> buddyList = new HashMap<Long,BuddyVO>();
+	private static Map<Long,Buddy> sourcebuddyList = new HashMap<Long,Buddy>();
 	private static Map<Long,JTextPane> userPanes = new HashMap<>();
 	private static Map<Long,JTextPane> buddyPanes = new HashMap<>();
 	private static Map<Long,JButton> groups = new HashMap<Long,JButton>();
@@ -890,6 +891,7 @@ public class HomePage extends JFrame{
 			createBuddyButton(name,Long.parseLong(buddy.getName()),buddy.isTemp(),buddy.isOnline());
 			System.out.print(String.format("name:%s,nick name:%s,state:%s,online:%s,temp:%s,blocked:%s,alias:%s",
 					buddy.getName(),buddy.getNickName(),buddy.getState(),buddy.isOnline(),buddy.isTemp(),buddy.isBlocked(),buddy.getVariable("alias")));
+			sourcebuddyList.put(Long.parseLong(buddy.getName()), buddy);
 		}
 	}
 	
@@ -916,6 +918,13 @@ public class HomePage extends JFrame{
 		for (Map.Entry<Long,BuddyVO> map:buddyList.entrySet()) {
 			if(map.getValue().getBuddyName().equals(alias)) {
 				return map.getValue().isOnline();
+			}
+		}
+		for (Buddy buddy:sourcebuddyList.values()) {
+			String name = String.format("Guest%s", buddy.getName());
+			System.out.println(String.format("name:%s,alias:%s",name,alias));
+			if(name.equals(alias)) {
+				return buddy.isOnline();
 			}
 		}
 		return false;
